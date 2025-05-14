@@ -52,7 +52,9 @@ for movement in ["static", "moving"]:
     local_shell.write_file(run_dir + "/.gitignore", "logs_ns3")
 
     # From-to list
-    list_from_to = [(1174, 1229), (1254, 1195)]
+    # list_from_to = [(1156,1157), (1156,1160),(1156,1164), (1156,1167)]
+    list_from_to = [(1156,1157), (1156,1157), (1156,1157), (1156,1157)]
+    # list_from_to = [(1156,1167)]
 
     # Log all flows
     local_shell.sed_replace_in_file_plain(
