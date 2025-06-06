@@ -26,7 +26,7 @@ import satgen
 import os
 
 
-class uplink_downlink_MainHelper:
+class splitting_MainHelper:
 
     def __init__(
             self,
@@ -139,7 +139,7 @@ class uplink_downlink_MainHelper:
             gsl_interfaces_per_satellite = 1
         elif dynamic_state_algorithm == "algorithm_paired_many_only_over_isls":
             gsl_interfaces_per_satellite = len(ground_stations)
-        elif dynamic_state_algorithm == "algorithm_free_gs_one_sat_uplink_downlink_only_over_isls":
+        elif dynamic_state_algorithm == "algorithm_free_gs_one_sat_uplink_downlink_only_over_isls_lasthop_splitting":
             gsl_interfaces_per_satellite = 2
         else:
             raise ValueError("Unknown dynamic state algorithm: " + dynamic_state_algorithm)

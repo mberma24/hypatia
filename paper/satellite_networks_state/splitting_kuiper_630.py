@@ -22,7 +22,7 @@
 
 import sys
 import math
-from uplink_downlink_helper import uplink_downlink_MainHelper
+from splitting_helper import splitting_MainHelper
 
 # WGS72 value; taken from https://geographiclib.sourceforge.io/html/NET/NETGeographicLib_8h_source.html
 EARTH_RADIUS = 6378135.0
@@ -60,7 +60,7 @@ INCLINATION_DEGREE = 51.9
 
 ################################################################
 
-main_helper = uplink_downlink_MainHelper(
+main_helper = splitting_MainHelper(
         BASE_NAME,
         NICE_NAME,
         ECCENTRICITY,
@@ -88,7 +88,7 @@ def main():
         exit(1)
     else:
         main_helper.calculate(
-            "gen_data_uplink_downlink",
+            "gen_data_lasthop_splitting",
             int(args[0]),
             int(args[1]),
             args[2],
