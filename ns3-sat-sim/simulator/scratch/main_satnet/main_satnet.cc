@@ -37,6 +37,7 @@
 #include "ns3/topology-satellite-network.h"
 #include "ns3/tcp-optimizer.h"
 #include "ns3/arbiter-single-forward-helper.h"
+#include "ns3/arbiter-deflection-helper.h"
 #include "ns3/ipv4-arbiter-routing-helper.h"
 #include "ns3/gsl-if-bandwidth-helper.h"
 
@@ -69,7 +70,8 @@ int main(int argc, char *argv[]) {
 
     // Read topology, and install routing arbiters
     Ptr<TopologySatelliteNetwork> topology = CreateObject<TopologySatelliteNetwork>(basicSimulation, Ipv4ArbiterRoutingHelper());
-    ArbiterSingleForwardHelper arbiterHelper(basicSimulation, topology->GetNodes());
+    // ArbiterSingleForwardHelper arbiterHelper(basicSimulation, topology->GetNodes());
+    ArbiterDeflectionHelper arbiterHelper(basicSimulation, topology->GetNodes());
     GslIfBandwidthHelper gslIfBandwidthHelper(basicSimulation, topology->GetNodes());
 
     // Schedule flows
