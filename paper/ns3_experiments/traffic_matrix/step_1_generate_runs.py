@@ -31,7 +31,8 @@ local_shell.remove_force_recursive("runs")
 local_shell.remove_force_recursive("pdf")
 local_shell.remove_force_recursive("data")
 
-for traffic_mode in ["specific", "general"]:
+# for traffic_mode in ["specific", "general"]:
+for traffic_mode in ["general"]:
     for movement in ["static", "moving"]:
 
         # Prepare run directory
@@ -164,17 +165,27 @@ for traffic_mode in ["specific", "general"]:
         elif traffic_mode == "general":
 
             # Create a random reciprocal pairing with already one pair known (1174, 1229)
+            # random.seed(123456789)
+            # random.randint(0, 100000000)  # Legacy reasons
+            # seed_from_to = random.randint(0, 100000000)
+            # a = set(range(1156, 1256))
+            # a.remove(1174)
+            # a.remove(1229)
+            # list_from_to = [(1174, 1229), (1229, 1174)]
+            # list_from_to = list_from_to + networkload.generate_from_to_reciprocated_random_pairing(
+            #     list(a),
+            #     seed_from_to
+            # )
+
             random.seed(123456789)
             random.randint(0, 100000000)  # Legacy reasons
             seed_from_to = random.randint(0, 100000000)
             a = set(range(1156, 1256))
-            a.remove(1174)
-            a.remove(1229)
-            list_from_to = [(1174, 1229), (1229, 1174)]
-            list_from_to = list_from_to + networkload.generate_from_to_reciprocated_random_pairing(
+            list_from_to = networkload.generate_from_to_reciprocated_random_pairing(
                 list(a),
                 seed_from_to
             )
+            list_from_to = list_from_to * 10
 
         else:
             raise ValueError("Unknown traffic mode: " + traffic_mode)
