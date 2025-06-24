@@ -15,8 +15,10 @@ def build(bld):
         'model/arbiter-satnet.cc',
         'model/arbiter-single-forward.cc',
         'model/arbiter-deflection.cc',
+        'model/arbiter-gs-priority-deflection.cc',
         'helper/arbiter-single-forward-helper.cc',
         'helper/arbiter-deflection-helper.cc',
+        'helper/arbiter-gs-priority-deflection-helper.cc',
         'helper/gsl-if-bandwidth-helper.cc',
         ]
 
@@ -40,8 +42,10 @@ def build(bld):
         'model/arbiter-satnet.h',
         'model/arbiter-single-forward.h',
         'model/arbiter-deflection.h',
+        'model/arbiter-gs-priority-deflection.h',
         'helper/arbiter-single-forward-helper.h',
         'helper/arbiter-deflection-helper.h',
+        'helper/arbiter-gs-priority-deflection-helper.h',
         'helper/gsl-if-bandwidth-helper.h',
         ]
 
