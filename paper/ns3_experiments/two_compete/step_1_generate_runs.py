@@ -53,7 +53,7 @@ for movement in ["static", "moving"]:
 
     # From-to list
     # list_from_to = [(1156,1157), (1156,1160),(1156,1164), (1156,1167)]
-    list_from_to = [(1156,1157),[1156,1157],[1156,1157],[1156,1157],[1156,1157]]
+    list_from_to = [(1156, 1157)] * 10
     # list_from_to = [(1156,1167)]
 
     # Log all flows
