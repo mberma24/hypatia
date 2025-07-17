@@ -38,10 +38,22 @@
 #include "ns3/tcp-optimizer.h"
 #include "ns3/arbiter-single-forward-helper.h"
 #include "ns3/arbiter-deflection-helper.h"
+#include "ns3/arbiter-gs-priority-deflection-helper.h"
 #include "ns3/ipv4-arbiter-routing-helper.h"
 #include "ns3/gsl-if-bandwidth-helper.h"
+#include "ns3/packet-loss-counter.h"
+
+
+#include "ns3/flow-monitor-helper.h"
+#include "ns3/flow-monitor.h"
+
 
 using namespace ns3;
+
+
+
+
+
 
 int main(int argc, char *argv[]) {
 
@@ -62,6 +74,9 @@ int main(int argc, char *argv[]) {
     // Load basic simulation environment
     Ptr<BasicSimulation> basicSimulation = CreateObject<BasicSimulation>(run_dir);
 
+
+
+
     // Setting socket type
     Config::SetDefault ("ns3::TcpL4Protocol::SocketType", StringValue ("ns3::" + basicSimulation->GetConfigParamOrFail("tcp_socket_type")));
 
@@ -70,8 +85,10 @@ int main(int argc, char *argv[]) {
 
     // Read topology, and install routing arbiters
     Ptr<TopologySatelliteNetwork> topology = CreateObject<TopologySatelliteNetwork>(basicSimulation, Ipv4ArbiterRoutingHelper());
-    // ArbiterSingleForwardHelper arbiterHelper(basicSimulation, topology->GetNodes());
-    ArbiterDeflectionHelper arbiterHelper(basicSimulation, topology->GetNodes());
+
+    //ArbiterSingleForwardHelper arbiterHelper(basicSimulation, topology->GetNodes());
+    //ArbiterDeflectionHelper arbiterHelper(basicSimulation, topology->GetNodes());
+    ArbiterGSPriorityDeflectionHelper arbiterHelper(basicSimulation, topology->GetNodes());//arbiterHelper(basicSimulation, topology->GetNodes());
     GslIfBandwidthHelper gslIfBandwidthHelper(basicSimulation, topology->GetNodes());
 
     // Schedule flows
@@ -83,6 +100,20 @@ int main(int argc, char *argv[]) {
     // Schedule pings
     PingmeshScheduler pingmeshScheduler(basicSimulation, topology); // Requires enable_pingmesh_scheduler=true
 
+    std::srand(std::time(nullptr));
+
+    // LogComponentEnable("TcpL4Protocol", ns3::LOG_LEVEL_INFO);
+    // LogComponentEnable("TcpSocketBase", ns3::LOG_LEVEL_INFO);
+    
+    // FlowMonitorHelper flowmon;
+    // Ptr<FlowMonitor> monitor = flowmon.InstallAll();
+
+    // LogComponentEnable("FlowMonitor", LOG_LEVEL_INFO);
+
+
+
+
+    
     // Run simulation
     basicSimulation->Run();
 
@@ -100,6 +131,8 @@ int main(int argc, char *argv[]) {
 
     // Finalize the simulation
     basicSimulation->Finalize();
+
+
 
     return 0;
 

@@ -45,7 +45,7 @@ ArbiterResult ArbiterSatnet::Decide(
         ns3::Ipv4Header const &ipHeader,
         bool is_socket_request_for_source_ip
 ) {
-
+    // printf("Starting...\n");
     // Decide the next node
     std::tuple<int32_t, int32_t, int32_t> next_node_id_my_if_next_if = TopologySatelliteNetworkDecide(
                 source_node_id,
