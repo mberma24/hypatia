@@ -30,7 +30,7 @@ for movement in ["static", "moving"]:
     local_shell.write_file(run_dir + "/.gitignore", "logs_ns3")
 
     # Define flows
-    list_from_to = [(1156, 1157)] 
+    list_from_to = [(1156, 1157)] * 100
 
 
     # 1156 -> | 617 -> 583 -> 549 -> 515 -> 514 -> 513 -> 1157 | 0

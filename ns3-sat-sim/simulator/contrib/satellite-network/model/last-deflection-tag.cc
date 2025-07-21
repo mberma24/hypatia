@@ -12,6 +12,10 @@ LastDeflectionTag::LastDeflectionTag() {}
 LastDeflectionTag::LastDeflectionTag(const std::vector<int32_t>& path)
   : m_path(path) {}
 
+LastDeflectionTag::LastDeflectionTag(const Ptr<const Packet> pkt) {
+    pkt->PeekPacketTag(*this);
+}
+
 TypeId
 LastDeflectionTag::GetTypeId (void)
 {

@@ -15,6 +15,7 @@ class LastDeflectionTag : public Tag
 public:
   LastDeflectionTag();
   LastDeflectionTag(const std::vector<int32_t>& path);
+  LastDeflectionTag(const Ptr<const Packet>);
 
   static TypeId GetTypeId (void);
   virtual TypeId GetInstanceTypeId (void) const override;

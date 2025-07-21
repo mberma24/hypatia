@@ -145,19 +145,26 @@ private:
         ALWAYS  // (assuming checkpoints are passed) if you want to always deflect... for some reason
     } DeflectionType;
 
-    typedef enum CacheRecomputingState {
-        USE,        // use cache entry
-        RECOMPUTE,  // recompute default 
-        DEFLECT,    // deflect it
-        FORWARD,    // send straight to GS
-        DROP,       // drop packet
-        GOTBACK     // we received a packet we sent out already
-    } CacheRecomputingState;
 
-    std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>> m_next_hop_list; 
+    // context for routing a packet
+    struct PacketRoutingContext {
+            ns3::Ptr<const ns3::Packet> pkt;
+            const ns3::Ipv4Header& ipHeader;
+            bool isRequestForSourceIpNoNextHeader;
+            std::vector<std::tuple<int32_t, int32_t, int32_t>> nextHopOptions;
+    };
+    
+    // list of lists next hops, per node id
+    std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>> 
+    m_next_hop_list; 
 
-     // (src ip, dst ip, src port, dst port) : [next_if, ttl_limit, queue_fullness, experiation time] 
-    std::unordered_map<std::tuple<uint32_t,uint32_t,uint16_t,uint16_t>, std::tuple<uint32_t, uint8_t, double, Time>, TupleHash> m_cache; // cache used for per flow deflection
+    // (src ip, dst ip, src port, dst port) : [next_if, ttl_limit, queue_fullness, experiation time] 
+    std::unordered_map
+        <
+            std::tuple<uint32_t,uint32_t,uint16_t,uint16_t>, 
+            std::tuple<uint32_t, uint8_t, double, Time>, 
+            TupleHash
+        > m_cache; // cache used for per flow deflection
     Time m_refresh_time;    // how long until the cache will clear itself
 
     /**
@@ -166,7 +173,7 @@ private:
      * @param ipv4Header    A reference to some IPV4 header.
      * @param packet        A pointer to the packet we are analyzing.
      */
-    void PrintFlowFromIpv4Header(const Ipv4Header &ipv4Header, Ptr<const Packet> packet);
+    void PrintFlowFromIpv4Header(const PacketRoutingContext& context);
 
     /**
      * Prints out infomation about this nodes cache
@@ -224,7 +231,7 @@ private:
      *
      * @return  The random number.
      */
-    double NormalRNG();
+    double NormalRNG(double avrg, double sd);
 
     /**
      * Generates a hash for some IP packet/header.
@@ -237,9 +244,7 @@ private:
      * @return                                              The hash.
      */
     uint32_t GenerateIpHash(
-            Ptr<const Packet> pkt,
-            Ipv4Header const &ipHeader,
-            bool is_request_for_source_ip_so_no_next_header
+            const PacketRoutingContext& context
     );
     
     /**
@@ -252,7 +257,9 @@ private:
      * 
      * @return                                              A tuple representing (src port, dst port).
      */
-    std::tuple<uint16_t, uint16_t> GetPorts(Ptr<const Packet> pkt, uint8_t proto, bool is_request_for_source_ip_so_no_next_header);
+    std::tuple<uint16_t, uint16_t> GetPorts(
+            const PacketRoutingContext& context
+    );
 
     /**
      * Generates some [0,1] value, representing the chances we will deflect.
@@ -267,9 +274,7 @@ private:
      *                                                      chances of deflection.
      */
     double GenerateDeflectionInfo( 
-            Ptr<const Packet> pkt,
-            Ipv4Header const &ipHeader,
-            bool is_request_for_source_ip_so_no_next_header
+            const PacketRoutingContext& context
     );
 
     /**
@@ -301,7 +306,7 @@ private:
      * 
      * @return                      The index chosen from next_hop_options.
      */
-    int32_t ChooseIDX(const std::vector<std::tuple<int32_t, int32_t, int32_t>> next_hop_options);
+    int32_t ChooseIDX(const PacketRoutingContext& context);
 
     /**
      * Given some packet and a list of options to forward to, determine where
@@ -316,29 +321,28 @@ private:
      * @return                                              The index to forward to, chosen from 
      *                                                      next_hop_options.
      */
-    int32_t HashFunc(Ptr<const Packet> pkt, 
-            Ipv4Header const &ipHeader, 
-            bool is_request_for_source_ip_so_no_next_header, 
-            const std::vector<std::tuple<int32_t, int32_t, int32_t>> next_hop_options
+    int32_t HashFunc(
+            const PacketRoutingContext& context
     );
 
-    /**
-     * Check to see if we should recompute a cache entry.
-     *
-     * @param ttl           The ttl of our packet.
-     * @param filled_ratio  How filled the netdevice queue is for the GSL.
-     * @param curr_time     The current simulation time.
-     * @param key           The key of this packets flow in cache.
-     * 
-     * @return              If we should recompute true, else false.
-     */
-    CacheRecomputingState CheckRecompute(
-            uint8_t ttl, 
-            double filled_ratio, 
-            Time curr_time, 
-            std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key,
-            LastDeflectionTag tag
+
+    int32_t GetNewCacheValue(
+            const PacketRoutingContext& context,
+            std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
     );
+
+    int32_t GetUsedCacheValue(
+            const PacketRoutingContext& context,
+            std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
+    );
+
+    int32_t GetUrgentCacheValue(
+            const PacketRoutingContext& context,
+            std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
+
+    );
+    std::pair<ArbiterGSPriorityDeflection::PacketRoutingContext, std::vector<size_t>> 
+    RemoveUsedHops(const PacketRoutingContext& context);
 
     /**
      * Check to ee if we should recompute a cache entry.
@@ -355,11 +359,7 @@ private:
      *                                                      next_hop_options.
      */
     int32_t GetCacheValue(
-            CacheRecomputingState is_recomputing,
-            Ptr<const Packet> pkt, 
-            Ipv4Header const &ipHeader, 
-            bool is_request_for_source_ip_so_no_next_header, 
-            const std::vector<std::tuple<int32_t, int32_t, int32_t>> next_hop_options,
+            const PacketRoutingContext& context,
             std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
     );
     
@@ -377,10 +377,7 @@ private:
      *                                                      @p next_hop_options.
      */
     int32_t CacheHasheFunc(
-            Ptr<const Packet> pkt, 
-            Ipv4Header const &ipHeader, 
-            bool is_request_for_source_ip_so_no_next_header, 
-            const std::vector<std::tuple<int32_t, int32_t, int32_t>> next_hop_options
+            const PacketRoutingContext& context
     );
 
 

@@ -180,12 +180,17 @@ for traffic_mode in ["general"]:
             random.seed(123456789)
             random.randint(0, 100000000)  # Legacy reasons
             seed_from_to = random.randint(0, 100000000)
+            #a = set(range(1156, 1256))
             a = set(range(1156, 1256))
-            list_from_to = networkload.generate_from_to_reciprocated_random_pairing(
-                list(a),
-                seed_from_to
-            )
-            list_from_to = list_from_to * 10
+            # list_from_to = networkload.generate_from_to_reciprocated_random_pairing(
+            #     list(a),
+            #     seed_from_to
+            # )
+            list_from_to = []
+            for i in range(1156, 1256, 2):
+                if i + 1 <= 1256:
+                    list_from_to.append((i, i + 1))
+            list_from_to = list_from_to * 100
 
         else:
             raise ValueError("Unknown traffic mode: " + traffic_mode)
