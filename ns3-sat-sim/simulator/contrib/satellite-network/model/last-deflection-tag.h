@@ -14,8 +14,7 @@ class LastDeflectionTag : public Tag
 {
 public:
   LastDeflectionTag();
-  LastDeflectionTag(const std::vector<int32_t>& path);
-  LastDeflectionTag(const Ptr<const Packet>);
+  LastDeflectionTag(int32_t node_id);
 
   static TypeId GetTypeId (void);
   virtual TypeId GetInstanceTypeId (void) const override;
@@ -24,12 +23,13 @@ public:
   virtual uint32_t GetSerializedSize (void) const override;
   virtual void Print (std::ostream &os) const override;
 
-  void AddNodeId(int32_t nodeId);
-  void SetPath(const std::vector<int32_t>& path);
-  std::vector<int32_t> GetPath() const;
+  void SetLastNode(int32_t nodeId);
+  int32_t GetLastNode() const;
+  uint8_t GetNumDeflections() const;
 
 private:
-  std::vector<int32_t> m_path;
+  int32_t m_last_node;
+  uint8_t m_num_def;
 };
 
 } // namespace ns3

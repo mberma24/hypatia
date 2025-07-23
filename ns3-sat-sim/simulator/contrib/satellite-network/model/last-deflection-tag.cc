@@ -7,14 +7,11 @@ namespace ns3 {
 NS_LOG_COMPONENT_DEFINE ("LastDeflectionTag");
 NS_OBJECT_ENSURE_REGISTERED (LastDeflectionTag);
 
-LastDeflectionTag::LastDeflectionTag() {}
+LastDeflectionTag::LastDeflectionTag() : m_last_node(-1), m_num_def(0) {}
 
-LastDeflectionTag::LastDeflectionTag(const std::vector<int32_t>& path)
-  : m_path(path) {}
+LastDeflectionTag::LastDeflectionTag(int32_t node_id)
+  : m_last_node(node_id), m_num_def(1) {}
 
-LastDeflectionTag::LastDeflectionTag(const Ptr<const Packet> pkt) {
-    pkt->PeekPacketTag(*this);
-}
 
 TypeId
 LastDeflectionTag::GetTypeId (void)
@@ -34,63 +31,47 @@ LastDeflectionTag::GetInstanceTypeId (void) const
 void
 LastDeflectionTag::Serialize (TagBuffer i) const
 {
-  uint32_t size = m_path.size();
-  i.WriteU32(size);
-  for (uint32_t idx = 0; idx < size; ++idx)
-    {
-      i.WriteU32(static_cast<uint32_t>(m_path[idx]));
-    }
+  i.WriteU32(static_cast<uint32_t>(m_last_node));
+  i.WriteU8(m_num_def);
 }
 
 void
 LastDeflectionTag::Deserialize (TagBuffer i)
 {
-  uint32_t size = i.ReadU32();
-  m_path.clear();
-  for (uint32_t idx = 0; idx < size; ++idx)
-    {
-      m_path.push_back(static_cast<int32_t>(i.ReadU32()));
-    }
+  m_last_node = static_cast<int32_t>(i.ReadU32());
+  m_num_def = i.ReadU8();
 }
 
 uint32_t
 LastDeflectionTag::GetSerializedSize (void) const
 {
-  // 4 bytes for size + 4 bytes per int32_t entry
-  return 4 + 4 * m_path.size();
+  return 4 + 1;
 }
 
 void
 LastDeflectionTag::Print (std::ostream &os) const
 {
-  os << "Path=[";
-  for (size_t i = 0; i < m_path.size(); ++i)
-    {
-      os << m_path[i];
-      if (i != m_path.size() - 1)
-        {
-          os << " -> ";
-        }
-    }
-  os << "]";
+  os << "LastNode=" << m_last_node << ", Num=" << static_cast<uint32_t>(m_num_def);
+
 }
 
 void
-LastDeflectionTag::AddNodeId (int32_t nodeId)
+LastDeflectionTag::SetLastNode(int32_t nodeId)
 {
-  m_path.push_back(nodeId);
+  m_last_node = nodeId;
+  m_num_def += 1;
 }
 
-void
-LastDeflectionTag::SetPath (const std::vector<int32_t>& path)
+int32_t
+LastDeflectionTag::GetLastNode() const
 {
-  m_path = path;
+  return m_last_node;
 }
 
-std::vector<int32_t>
-LastDeflectionTag::GetPath () const
+uint8_t
+LastDeflectionTag::GetNumDeflections() const
 {
-  return m_path;
+  return m_num_def;
 }
 
 } // namespace ns3

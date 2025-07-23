@@ -21,6 +21,7 @@
 #define ARBITER_GS_PRIORITY_DEFLECTION_H
 
 #include <tuple>
+#include <unordered_set>
 #include "ns3/arbiter-satnet.h"
 #include "ns3/topology-satellite-network.h"
 #include "ns3/hash.h"
@@ -29,7 +30,7 @@
 #include "ns3/udp-header.h"
 #include "ns3/tcp-header.h"
 #include "ns3/last-deflection-tag.h"
-#include <unordered_set>
+
 
 using TimePoint = std::chrono::steady_clock::time_point;
 
@@ -40,7 +41,6 @@ struct FlowKey {
     uint16_t srcPort;
     uint16_t dstPort;
 
-    // Define equality
     bool operator==(const FlowKey& other) const {
         return srcIp == other.srcIp &&
                dstIp == other.dstIp &&
@@ -97,7 +97,7 @@ public:
 
 
 
-    // Single forward next-hop implementation
+    // 
     std::tuple<int32_t, int32_t, int32_t> TopologySatelliteNetworkDecide(
             int32_t source_node_id,
             int32_t target_node_id,
@@ -137,41 +137,45 @@ private:
         DeflectionFlags flag;
         double threshold;
     };
-    
-        
-    typedef enum DeflectionType {
-        RNG,    // per packet
-        HASH,   // per flow*
-        ALWAYS  // (assuming checkpoints are passed) if you want to always deflect... for some reason
-    } DeflectionType;
 
 
     // context for routing a packet
     struct PacketRoutingContext {
-            ns3::Ptr<const ns3::Packet> pkt;
-            const ns3::Ipv4Header& ipHeader;
-            bool isRequestForSourceIpNoNextHeader;
-            std::vector<std::tuple<int32_t, int32_t, int32_t>> nextHopOptions;
-    };
+            ns3::Ptr<const ns3::Packet> pkt;                                    // the packet
+            const ns3::Ipv4Header& ipHeader;                                    // ip header for the packet
+            bool isRequestForSourceIpNoNextHeader;                              // true if this is a request targeting the source ip
+            std::vector<std::tuple<int32_t, int32_t, int32_t>> nextHopOptions;  // list of options to forward the packet to
+            
+            std::vector<double> weights;
+    }; 
+
+    // map of target ground station to weights for nodes to deflection to
+    std::unordered_map<int32_t, std::vector<double>> m_weights;
     
-    // list of lists next hops, per node id
+    // list of lists of next hops, per node id (forwarding table)
     std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>> 
     m_next_hop_list; 
 
+    // cache used for per flow deflection
     // (src ip, dst ip, src port, dst port) : [next_if, ttl_limit, queue_fullness, experiation time] 
     std::unordered_map
         <
             std::tuple<uint32_t,uint32_t,uint16_t,uint16_t>, 
             std::tuple<uint32_t, uint8_t, double, Time>, 
             TupleHash
-        > m_cache; // cache used for per flow deflection
-    Time m_refresh_time;    // how long until the cache will clear itself
+        > m_cache; 
+        
+    // how long until the cache will clear itself
+    Time m_refresh_time;    
+    // how long until the weights will go back to normal
+    Time m_uniform_time; 
+    std::unordered_map<int32_t, Time> m_update_times; 
+
 
     /**
      * Prints out infomation about a flow given an IP header (src/dst ip+port, protocol) from some packet.
      *
-     * @param ipv4Header    A reference to some IPV4 header.
-     * @param packet        A pointer to the packet we are analyzing.
+     * @param context       The packet/routing context for this forwarding decision.
      */
     void PrintFlowFromIpv4Header(const PacketRoutingContext& context);
 
@@ -179,6 +183,9 @@ private:
      * Prints out infomation about this nodes cache
      */
     void PrintCache();
+
+    void CheckDecayWeights(int32_t target_node_id);
+    void HandleWeights(PacketRoutingContext& context, int32_t target_node_id);
 
     /**
      * Given the index of the checkpoint flag we want, returns said flag.
@@ -192,119 +199,113 @@ private:
     /**
      * Checks if some node is a ground station
      *
-     * @param node_id    The id number of the node we are checking
+     * @param node_id       The id number of the node we are checking
      * 
-     * @return           True if ground station, else false.
+     * @return              True if ground station, else false.
      */
     bool IsGroundStation(int32_t node_id);
 
     /**
      * Checks if the current node is the final hop before arriving at a ground station.
      *
-     * @param next_node_id      The id number of default next node to forward to.
-     * @param my_if_id          The default interface we would forward through to get to the next node.
+     * @param next_node_id  The id number of default next node to forward to.
+     * @param my_if_id      The default interface we would forward through to get to the next node.
      * 
-     * @return                  True if this is the final stop before a ground station.
+     * @return              True if this is the final stop before a ground station.
      */
     bool IsFinalHopToGS(int32_t next_node_id, int32_t my_if_id);
     
     /**
      * Get the queue for some interface id.
      *
-     * @param if_id     The interface id we are dealing with.
+     * @param if_id         The interface id we are dealing with.
      * 
-     * @return          The netdevice queue.
+     * @return              The netdevice queue.
      */
     Ptr<Queue<Packet>> GetQueue(int32_t if_id);
 
     /**
      * Get the ratio that the netdevice queue is filled for some link.
      *
-     * @param if_id     The interface id for the link we are dealing with.
+     * @param if_id         The interface id for the link we are dealing with.
      * 
-     * @return          The ratio of how filled this link is.
+     * @return              The ratio of how filled this link is.
      */
     double GetQueueRatio(int32_t if_id);
 
     /**
-     * Generates a random number ~ N(.5,.15).
+     * Generates a random number ~ N(avrg, sd).
      *
-     * @return  The random number.
+     * @return              The random number.
      */
-    double NormalRNG(double avrg, double sd);
+    double NormalRNG(double avg, double sd);
 
-    /**
-     * Generates a hash for some IP packet/header.
-     *
-     * @param pkt                                           The pkt we are basing this hash on.
-     * @param ipHeader                                      The ipHeader of our packet.
-     * @param is_request_for_source_ip_so_no_next_header    True if this is a request targeting the source IP,
-     *                                                      and thus should not expect a next header.
-     * 
-     * @return                                              The hash.
-     */
-    uint32_t GenerateIpHash(
-            const PacketRoutingContext& context
-    );
     
     /**
      * Gets the source and destination ports for some packet
      *
-     * @param pkt                                           The pkt we are dealing with
-     * @param proto                                         The protocol of our packet.
-     * @param is_request_for_source_ip_so_no_next_header    True if this is a request targeting the source IP,
-     *                                                      and thus should not expect a next header.
+     * @param context       The packet/routing context for this forwarding decision.
      * 
-     * @return                                              A tuple representing (src port, dst port).
+     * @return              A tuple representing (src port, dst port).
      */
-    std::tuple<uint16_t, uint16_t> GetPorts(
-            const PacketRoutingContext& context
-    );
-
-    /**
-     * Generates some [0,1] value, representing the chances we will deflect.
-     * (as r -> 0, our deflection chances rise)
-     *
-     * @param pkt                                           The pkt we are basing this on.
-     * @param ipHeader                                      The ipHeader of our packet.
-     * @param is_request_for_source_ip_so_no_next_header    True if this is a request targeting the source IP,
-     *                                                      and thus should not expect a next header.
-     * 
-     * @return                                              A double, representing our 
-     *                                                      chances of deflection.
-     */
-    double GenerateDeflectionInfo( 
-            const PacketRoutingContext& context
-    );
+    std::tuple<uint16_t, uint16_t> GetPorts(const PacketRoutingContext& context);
 
     /**
      * Counts the number of checkpoints passed.
      *
-     * @param filled    How filled the netdevice queue is.
-     * @param flags     The flags set. (all possible checkpoints)
+     * @param filled        How filled the netdevice queue is.
+     * @param flags         The flags set. (all possible checkpoints)
      * 
-     * @return          The number of checkpoints passed.
+     * @return              The number of checkpoints passed.
      */
     uint32_t CountPassedCheckpoints(double filled, DeflectionFlags flags);
 
     /**
      * Generates the chance to deflect.
      *
-     * @param flags                 The flags set. (all possible checkpoints)
-     * @param filled                How filled the netdevice queue is.
-     * @param passed_checkpoints    How many checkpoints have been passed.
+     * @param flags         The flags set. (all possible checkpoints)
+     * @param filled        How filled the netdevice queue is.
+     * @param passed_cp     How many checkpoints have been passed.
      * 
-     * @return                                              A [0,1] double representing our percent 
-     *                                                      chance of deflection.
+     * @return              A [0,1] double representing our percent 
+     *                      chance of deflection.
      */
-    double GetChanceDeflected(DeflectionFlags flags, double filled, int passed_checkpoints);
-   
+    double GetChanceDeflected(DeflectionFlags flags, double filled, int passed_cp);
+
+    /**
+     * Normalizes the weights of the given vector.
+     *
+     * @param weights       The weights, representing our likeliehood to deflect out of each forwarding
+     *                      table entry.
+     */
+    void Normalize(std::vector<double>& weights);
+
+    /**
+     * Decays each weight in the vector, moving them all towards being uniform.
+     *
+     * @param weights       The weights, representing our likeliehood to deflect out of each forwarding
+     *                      table entry.
+     */
+    void DecayWeight(std::vector<double>& weights);
+
+    /**
+     * Increases a specific weight in the given vector, while decreasing other weights.
+     *
+     * @param weights       The weights, representing our likeliehood to deflect out of each forwarding
+     *                      table entry.
+     * @param i             The index of the weight we are bumping.
+     */
+    void BumpWeight(std::vector<double>& weights, size_t i);
+
+    void BumpDownWeight(std::vector<double>& weights, size_t i);
+    
     /**
      * Choose where to deflect to.
      *
-     * @param next_hop_options      Our options of where we can forward to.
+     * @param context       The packet/routing context for this forwarding decision.
      * 
-     * @return                      The index chosen from next_hop_options.
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
      */
     int32_t ChooseIDX(const PacketRoutingContext& context);
 
@@ -312,51 +313,78 @@ private:
      * Given some packet and a list of options to forward to, determine where
      * to send the packet.
      *
-     * @param pkt                                           The packet we are forwarding.
-     * @param ipHeader                                      The ip header of our packet.
-     * @param is_request_for_source_ip_so_no_next_header    True if this is a request targeting the source IP,
-     *                                                      and thus should not expect a next header.
-     * @param next_hop_options                              Our options of where we can forward to.
+     * @param context       The packet/routing context for this forwarding decision.  
      * 
-     * @return                                              The index to forward to, chosen from 
-     *                                                      next_hop_options.
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
      */
-    int32_t HashFunc(
-            const PacketRoutingContext& context
-    );
+    int32_t HashFunc(const PacketRoutingContext& context);
 
-
+    /**
+     * Generates the cache entry given no previous entry exists for this key in our cache.
+     *
+     * @param context       The packet/routing context for this forwarding decision.  
+     * @param key           The key of this packets flow in cache.
+     * 
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
+     */
     int32_t GetNewCacheValue(
             const PacketRoutingContext& context,
             std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
     );
 
+    /**
+     * Generates the cache entry given some entry exists for this key in our cache.
+     *
+     * @param context       The packet/routing context for this forwarding decision.  
+     * @param key           The key of this packets flow in cache.
+     * 
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
+     */
     int32_t GetUsedCacheValue(
             const PacketRoutingContext& context,
             std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
     );
 
+    /**
+     * If too many deflections have occured or the TTL is now 1, this packet is marked urgent.
+     * When urgent, the arbiter decides wether to forward directly to its ground station or to drop
+     * the packet.
+     *
+     * @param context       The packet/routing context for this forwarding decision.  
+     * @param key           The key of this packets flow in cache.
+     * 
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
+     */
     int32_t GetUrgentCacheValue(
             const PacketRoutingContext& context,
             std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
 
     );
+
+    /**
+     * Creates a new context object the forwarding table is updates to not include deflections we have 
+     * already done.
+     *
+     * @param context       The packet/routing context for this forwarding decision.  
+     * 
+     * @return              A pair of the new context which contains the new forwarding table,
+     *                      and a vector mapping indices of new forwarding table to the old one. 
+     */
     std::pair<ArbiterGSPriorityDeflection::PacketRoutingContext, std::vector<size_t>> 
     RemoveUsedHops(const PacketRoutingContext& context);
 
     /**
-     * Check to ee if we should recompute a cache entry.
+     * Gets the value from a cache, possibly generating a new/recomputing the cache entry.
      *
-     * @param is_recomputing                                True if we should recompute a cache entry.
-     * @param pkt                                           The packet we are dealing with.
-     * @param ipHeader                                      The ip header of our packet.
-     * @param is_request_for_source_ip_so_no_next_header    True if this is a request targeting the source IP,
-     *                                                      and thus should not expect a next header.
-     * @param next_hop_options                              Our options of where we can forward to.
-     * @param key                                           The key of this packets flow in cache.
+     * @param context       The packet/routing context for this forwarding decision. 
+     * @param key           The key of this packets flow in cache.
      * 
-     * @return                                              The index to forward to, chosen from 
-     *                                                      next_hop_options.
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context
      */
     int32_t GetCacheValue(
             const PacketRoutingContext& context,
@@ -367,22 +395,12 @@ private:
      * Given some packet and a list of options to forward to, determine where
      * to send the packet based on and while maintaining this nodes cache.
      *
-     * @param pkt                                           The packet we are forwarding.
-     * @param ipHeader                                      The ip header of our packet.
-     * @param is_request_for_source_ip_so_no_next_header    True if this is a request targeting the source IP,
-     *                                                      and thus should not expect a next header.
-     * @param next_hop_options                              Our options of where we can forward to.
+     * @param context       The packet/routing context for this forwarding decision.
      * 
-     * @return                                              The index to forward to, chosen from 
-     *                                                      @p next_hop_options.
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
      */
-    int32_t CacheHasheFunc(
-            const PacketRoutingContext& context
-    );
-
-
-    
-
+    int32_t CacheHasheFunc(const PacketRoutingContext& context);
 };
 
 }

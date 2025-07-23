@@ -32,20 +32,22 @@
 /* General Deflection Settings */
 #define VERBOSE false        
 #define FLAGS OVER_0            // BEST: 0
-#define DEFLECTION_TYPE RNG     //
-#define DEFLECTION_BOOST 0
 #define STATIC false
+#define DEFLECTION_BOOST 0
+
 
 /* Cache Settings */
-#define USING_FLOW_CACHE true   // Is the cache being used
-#define CACHE_REFRESH_RATE 0    // How long until you need to clear the entire cache (0 for never)                  BEST: 0   (ms)
-#define ENTRY_EXPIRE_RATE 150   // How long in simulation time (ms) until a cache entry expires.                    BEST: 150 (ms)
-#define THRESHOLD_SIZE .4       // Threshold for how much the queue needs to change (%) to recalculate the value
-#define TTL_HOP_LIMIT 0         // How much lower does a ttl need to be to recalculate the value
-#define MAX_DEFLECTIONS 8      // How many deflections can occur per packet.
-
-#define DROP_DECAY .75           // If dropping in cache, multiply the threshold need by this value.
+#define USING_FLOW_CACHE true       // Is the cache being used
+#define CACHE_REFRESH_RATE 0        // How long until you need to clear the entire cache (0 for never)                  BEST: 0   (ms)
+#define ENTRY_EXPIRE_RATE 150       // How long in simulation time (ms) until a cache entry expires.                    BEST: 150 (ms)
+#define THRESHOLD_SIZE .4           // Threshold for how much the queue needs to change (%) to recalculate the value
+#define TTL_HOP_LIMIT 0             // How much lower does a ttl need to be to recalculate the value
+#define MAX_DEFLECTIONS 8           // How many deflections can occur per packet.
+#define DROP_DECAY .75              // If dropping in cache, multiply the threshold need by this value.
 #define REPEATED_DEFLECTIONS true
+
+#define WEIGHT_DECAY_RATE .001
+#define WEIGHT_LEARN_RATE .01
 
 
 
@@ -71,6 +73,7 @@ namespace ns3 {
             std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>> next_hop_list
     ) : ArbiterSatnet(this_node, nodes)
     {
+        m_uniform_time = Simulator::Now();
         m_refresh_time = Simulator::Now() + MilliSeconds(CACHE_REFRESH_RATE);
         m_next_hop_list = next_hop_list;
     }
@@ -82,7 +85,6 @@ namespace ns3 {
             Ipv4Header const &ipHeader,
             bool is_request_for_source_ip_so_no_next_header
     ) {
-        
         // Hash-based selection of next hop
         const auto& next_hops = m_next_hop_list[target_node_id];
 
@@ -96,7 +98,8 @@ namespace ns3 {
         std::tuple<int32_t, int32_t, int32_t> to_return = next_hops[0];
         int32_t next_node_id, my_if_id, next_if_id;
         std::tie(next_node_id, my_if_id, next_if_id) = to_return;
-        
+
+       
         
         //if something went wrong, we will simply return here (dropped, no path found)
         if (next_node_id < 0 || my_if_id < 0 ||  next_if_id < 0) {
@@ -107,24 +110,32 @@ namespace ns3 {
             }
             return to_return; // err
         }
+
+        
         PacketRoutingContext context {
                 pkt,
                 ipHeader,
                 is_request_for_source_ip_so_no_next_header,
-                next_hops
+                next_hops,
+                std::vector<double>()
         };
+
+        CheckDecayWeights(target_node_id);
     
         //if we are at the last hop before gs and have options
         bool fin = IsFinalHopToGS(next_node_id, my_if_id);
 
         if (fin && next_hops.size() > 1) { 
+            
+            
+            HandleWeights(context, target_node_id);
             //the core logic is in HashFunc
             int32_t n_if = 0;
             n_if =  USING_FLOW_CACHE 
                     ? CacheHasheFunc(context)
                     : HashFunc(context);
             if (int32_t(n_if) == -1) {
-                std::cout << "Dropped!\n";
+                if (VERBOSE) { std::cout << "Dropped!\n"; }
                 return std::make_tuple(-1, -1, -1);
             }
             to_return = next_hops[n_if];
@@ -133,26 +144,29 @@ namespace ns3 {
             int32_t next_node_id, my_if_id, next_if_id; 
             std::tie(next_node_id, my_if_id, next_if_id) = to_return;
 
-            if (pkt) {
+            if (pkt && VERBOSE) {
                 LastDeflectionTag tag;
                 pkt->PeekPacketTag(tag);
-                std::cout << "ID: " << pkt->GetUid() << " from " << m_node_id << " to " << next_node_id << " Path: ";
-                tag.Print(std::cout);
+                std::cout << "ID: " << pkt->GetUid() << " last: " << tag.GetLastNode() << " from: " << m_node_id << " to: " << next_node_id << " # def: " << int(tag.GetNumDeflections());
                 std::cout << " ttl: "  << int(ipHeader.GetTtl()) << "\n";
             }
-
+            
             // mark this packet if deflected
-            if (pkt && n_if > 0) {
+            if (pkt) {
                 Ptr<Packet> nonConstPkt = const_cast<Packet*>(PeekPointer(pkt));
-                LastDeflectionTag tag;
-                if (nonConstPkt->RemovePacketTag(tag)) {
-                    tag.AddNodeId(m_node_id); 
-                    nonConstPkt->AddPacketTag(tag);
+                LastDeflectionTag tag(m_node_id);
+                if (nonConstPkt->PeekPacketTag(tag)) {
+                    if (n_if > 0) {
+                        tag.SetLastNode(m_node_id);
+                        nonConstPkt->ReplacePacketTag(tag);
+                    } else {
+                        nonConstPkt->RemovePacketTag(tag);
+                    }
+                } else if (n_if > 0) {
+                    nonConstPkt->AddPacketTag(LastDeflectionTag(m_node_id));
                 } else {
-                    std::vector<int32_t> path = { m_node_id };
-                    tag = LastDeflectionTag(path);
-                    nonConstPkt->AddPacketTag(tag);
-                }   
+                }
+                
             }
         } 
         
@@ -234,6 +248,85 @@ namespace ns3 {
                 << " | Ports: " << srcPort << " -> " << dstPort << std::endl;
     }
 
+    void ArbiterGSPriorityDeflection::PrintCache() {
+        std::cout << "Time till refresh: " << m_refresh_time.GetMilliSeconds() - Simulator::Now().GetMilliSeconds() << std::endl;
+        for (auto it = m_cache.begin(); it != m_cache.end(); ++it) {
+            const std::tuple<uint32_t, uint32_t, uint16_t, uint16_t>& key = it->first;
+            const std::tuple<uint32_t, uint8_t, double, Time>& value = it->second;
+
+            uint32_t src_ip = std::get<0>(key);
+            uint32_t dst_ip = std::get<1>(key);
+            uint16_t src_port = std::get<2>(key);
+            uint16_t dst_port = std::get<3>(key);
+
+            uint32_t next_if = std::get<0>(value);
+            uint8_t ttl_min = std::get<1>(value);
+            double fullness = std::get<2>(value);
+            Time timestamp = std::get<3>(value);
+            
+
+            auto ms = timestamp.GetMilliSeconds();
+            ms = ms < 0 ? 0 : ms;
+
+            std::cout << "("
+                    << src_ip << ", "
+                    << dst_ip << ", "
+                    << src_port << ", "
+                    << dst_port << ") -> "
+                    << "(n_if: "
+                    << next_if << ", ttl_min: "
+                    << static_cast<int>(ttl_min) << ", Fullness:"
+                    << fullness << ", "
+                    << "ms till expiry: " << ms
+                    << ")\n";
+        }
+    }
+    void ArbiterGSPriorityDeflection::CheckDecayWeights(int32_t target_node_id) {
+        if (
+                m_weights.find(target_node_id) != m_weights.end() 
+                && Simulator::Now() >= m_uniform_time + MilliSeconds(1)
+        ) { 
+            DecayWeight(m_weights[target_node_id]); 
+            m_uniform_time =  Simulator::Now();
+        } 
+    }
+
+    void ArbiterGSPriorityDeflection::HandleWeights(PacketRoutingContext& context, int32_t target_node_id) {
+        size_t n = context.nextHopOptions.size() - 1;
+        if (m_weights.find(target_node_id) == m_weights.end()) { 
+            // make new weights
+            m_weights[target_node_id] = std::vector<double>(n, double(1) / (n)); 
+ 
+            
+            m_update_times[target_node_id] = Simulator::Now();
+        } 
+        
+        if (Simulator::Now() <= m_update_times[target_node_id] + NanoSeconds(100)) {
+            context.weights = m_weights[target_node_id];    
+            return;
+        }
+
+
+        LastDeflectionTag tag;
+
+        if (context.pkt->PeekPacketTag(tag) && tag.GetLastNode() > 0) {
+            int32_t from_node_id = tag.GetLastNode(); // the node we received this pkt from
+            for (size_t idx = 1; idx < context.nextHopOptions.size(); idx++) {
+                auto hop = context.nextHopOptions[idx];
+                int32_t next_hop_node_id = std::get<0>(hop); 
+                if (from_node_id == next_hop_node_id) { // if we could resend, decrease that likelihood
+                    BumpDownWeight(m_weights[target_node_id], idx - 1);
+                    break;
+                }
+                
+            }
+            
+        }
+
+
+        context.weights = m_weights[target_node_id];         
+    }
+
     ArbiterGSPriorityDeflection::Checkpoint 
     ArbiterGSPriorityDeflection::GetCheckpoint(int flag_index) {
         switch (flag_index){
@@ -269,24 +362,7 @@ namespace ns3 {
 
     bool ArbiterGSPriorityDeflection::IsFinalHopToGS(int32_t next_node_id, int32_t my_if_id) {
         //we simply check if this is a GSL, and if so we need to ensure THIS node is a satelight and the next node is NOT
-        auto node = m_nodes.Get(m_node_id);
-        if (node == nullptr) {
-            printf(" N ");
-            return 0;
-        }
-        
-        auto ipv4 = node->GetObject<Ipv4>();
-        if (ipv4 == nullptr || ipv4->GetNInterfaces() == 0 || uint32_t(my_if_id) > ipv4->GetNInterfaces()) {
-            printf(" I ");
-            return 0;
-        }
-    
-        auto dev = ipv4->GetNetDevice(my_if_id);
-        if (dev == nullptr) {
-            printf(" D ");
-            return 0;
-        }
-        bool is_gsl = dev->GetObject<GSLNetDevice>() != 0;
+        bool is_gsl = m_nodes.Get(m_node_id)->GetObject<Ipv4>()->GetNetDevice(my_if_id)->GetObject<GSLNetDevice>() != 0;
         
         bool this_is_gs = IsGroundStation(m_node_id);
         bool next_is_gs = IsGroundStation(next_node_id);
@@ -303,26 +379,15 @@ namespace ns3 {
         Ptr<Queue<Packet>> to_return = nullptr;
         
         if (isl != nullptr) {
-            if (VERBOSE&& false) {
-                printf("ISL Link\t");
-            }
             to_return = isl->GetQueue();
             
         } 
         if (gsl != nullptr) {
-            if (VERBOSE&& false) {
-                printf("GSL Link\t");
-            }
             to_return = gsl->GetQueue(); 
         } 
-        if (isl == nullptr && gsl == nullptr && VERBOSE&& false) {
-            printf("Unknown queue\t");
-            
-        }
         return to_return;
     }
 
-    // Gets the ratio the netdevice if filled given the if id for the link
     double ArbiterGSPriorityDeflection::GetQueueRatio(int32_t if_id) {
         Ptr<Queue<Packet>> dev_queue = GetQueue(if_id);
     
@@ -333,11 +398,11 @@ namespace ns3 {
         return double(curr_ND_queue_size) / (max_ND_queue_size); // how filled the queue is (0 <- empty, 1 <- full)
     }
 
-    double ArbiterGSPriorityDeflection::NormalRNG(double avrg = .5, double sd = .15) {
+    double ArbiterGSPriorityDeflection::NormalRNG(double avg = .5, double sd = .15) {
         static std::random_device rd;
         static std::mt19937 gen(rd());
 
-        std::normal_distribution<> dist(avrg, sd); 
+        std::normal_distribution<> dist(avg, sd); 
 
         double value = dist(gen);
 
@@ -351,32 +416,8 @@ namespace ns3 {
         }
     }
 
-    uint32_t ArbiterGSPriorityDeflection::GenerateIpHash(const PacketRoutingContext& context) {
-        //basic packet info
-        uint32_t src_ip = context.ipHeader.GetSource().Get();
-        uint32_t dst_ip = context.ipHeader.GetDestination().Get();
-        uint8_t proto = context.ipHeader.GetProtocol();
-        uint16_t src_port;
-        uint16_t dst_port;
-        std::tie(src_port, dst_port) = GetPorts(context);
-        uint8_t ttl = context.ipHeader.GetTtl();
-        
-        //calculate hash
-        uint32_t hash = src_ip;
-        hash ^= (dst_ip << 7) | (dst_ip >> 25);
-        hash ^= (proto << 13);
-        hash ^= (src_port << 3) | (src_port >> 13);
-        hash ^= (dst_port << 11) | (dst_port >> 5);
-        hash ^= (ttl << 17) | (ttl >> 3);
-        hash *= 2654435761u;
-        hash ^= (hash >> 16);
-        return hash;
-    }
-
     std::tuple<uint16_t, uint16_t> 
-    ArbiterGSPriorityDeflection::GetPorts(
-            const PacketRoutingContext& context
-    ) {
+    ArbiterGSPriorityDeflection::GetPorts(const PacketRoutingContext& context) {
         uint8_t protocol = context.ipHeader.GetProtocol();
         if (!context.isRequestForSourceIpNoNextHeader) {
             if (protocol == 6) { // TCP
@@ -391,25 +432,6 @@ namespace ns3 {
         } 
         return std::make_tuple(0,0);
         
-    }
-
-    double ArbiterGSPriorityDeflection::GenerateDeflectionInfo(
-            const PacketRoutingContext& context
-    ) {
-        float r = 1;        // determines if we should deflect
-                            // as r -> 0, our chances of deflection go up
-
-        if (DEFLECTION_TYPE == RNG) {         // we deflect on a per packet basis
-            r = NormalRNG();
-            
-        } else if (DEFLECTION_TYPE == HASH)  {   // we deflect on a per flow basis
-            uint32_t r_int = GenerateIpHash(context);
-            r = double(r_int % 65536) / 65535;
-        } else if (DEFLECTION_TYPE == ALWAYS) {  // if a checkpoint is passed, we deflect 
-            r = 1;
-        }
-        return r;
-
     }
 
     uint32_t ArbiterGSPriorityDeflection::CountPassedCheckpoints(double filled, DeflectionFlags flags) {
@@ -429,7 +451,7 @@ namespace ns3 {
         return num_passed;
     }   
 
-    double ArbiterGSPriorityDeflection::GetChanceDeflected(DeflectionFlags flags, double filled, int passed_checkpoints) {
+    double ArbiterGSPriorityDeflection::GetChanceDeflected(DeflectionFlags flags, double filled, int passed_cp) {
         if (STATIC) { // set to highest passed flag false
             double highest_passed = 0.0;
 
@@ -446,35 +468,68 @@ namespace ns3 {
             return highest_passed;
         } else { // set to the percent chance we pass
             // for every checkpoint pass, raise the deflected_chance
-            double exponent = pow(0.9, passed_checkpoints - 1);
+            double exponent = pow(0.9, passed_cp - 1);
             return pow(filled, exponent);
         }
     }   
 
+    void ArbiterGSPriorityDeflection::Normalize(std::vector<double>& weights) {
+        double sum = std::accumulate(weights.begin(), weights.end(), 0.0);
+        if (sum > 0.0) {
+            for (double& w : weights) {
+                w /= sum;
+            }
+        } else { // uniform
+            double uniform = 1.0 / weights.size();
+            for (double& w : weights) {
+                w = uniform;
+            }
+        }
+    }
+
+    void ArbiterGSPriorityDeflection::DecayWeight(std::vector<double>& weights) {
+        double uniform_val = 1.0 / weights.size();
+        for (auto& w : weights) {
+            w = (1 - WEIGHT_DECAY_RATE) * w + WEIGHT_DECAY_RATE * uniform_val;
+        }
+
+        // if OVER 1, big problems
+        if (std::accumulate(weights.begin(), weights.end(), 0.0) > 1) {
+            Normalize(weights); // normalize for saftey
+        }
+    }
+
+    void ArbiterGSPriorityDeflection::BumpWeight(std::vector<double>& weights, size_t i) {
+        if (weights.empty() || i >= weights.size()) {
+            return;
+        }
+
+        weights[i] += WEIGHT_LEARN_RATE;
+    }
+
+    void ArbiterGSPriorityDeflection::BumpDownWeight(std::vector<double>& weights, size_t i) {
+        if (weights.empty() || i >= weights.size()) {
+            return;
+        }
+
+        weights[i] -= WEIGHT_LEARN_RATE;
+    }
+
     int32_t ArbiterGSPriorityDeflection::ChooseIDX(const PacketRoutingContext& context) { 
-        std::vector<double> weights;
-        for (size_t i = 1; i < context.nextHopOptions.size(); ++i) {
-            auto& option = context.nextHopOptions[i];
-            int32_t next_if = std::get<1>(option);
-            auto queue = GetQueue(next_if);
-            weights.push_back(1 - double(queue->GetNPackets()) / queue->GetMaxSize().GetValue());
+        std::vector<double> weights = context.weights;
+        std::cout << "Weights: [";
+        for (double w : weights) {
+            std::cout << w << " ";
         }
-        double total_weight = std::accumulate(weights.begin(), weights.end(), 0.0); 
-
-        // if all are equal, choose randomly
-        if (total_weight == 0.0) {
-            return 1 + (rand() % (context.nextHopOptions.size() - 1));
-        }
-
-        // else choose based on a distribution
+        std::cout << "]" << std::endl;
+        
         std::mt19937 gen(static_cast<uint32_t>(rand())); 
         std::discrete_distribution<> dist(weights.begin(), weights.end());
         return dist(gen) + 1;
+        //return 1 + ( rand() % (context.nextHopOptions.size() - 1));
     }
 
-    int32_t ArbiterGSPriorityDeflection::HashFunc(
-            const PacketRoutingContext& context
-    ) {
+    int32_t ArbiterGSPriorityDeflection::HashFunc(const PacketRoutingContext& context) {
         // total set flags
         DeflectionFlags flags = (DeflectionFlags)(FLAGS);
 
@@ -483,12 +538,12 @@ namespace ns3 {
         
         //if no checkpoints are passed or there are no deflection options, we will NEVER deflect anyways
         if (passed_checkpoints > 0 && context.nextHopOptions.size() > 1) {
-            float r;        // determines if we should deflect
-            r = GenerateDeflectionInfo(context);
+            float r = NormalRNG();  // determines if we should deflect
             //adjust rates
             deflected_chance = GetChanceDeflected(flags, deflected_chance, passed_checkpoints);
             
-            if (r < deflected_chance + DEFLECTION_BOOST) { //we now want to deflect the packet
+            
+            if (r < deflected_chance) { //we now want to deflect the packet
                 //select a random idx that is NOT 0, in range of options
                 int32_t idx = ChooseIDX(context);
                 return idx;
@@ -497,41 +552,6 @@ namespace ns3 {
 
         return 0; // we did not deflect -> return zero
     }
-
-    void ArbiterGSPriorityDeflection::PrintCache() {
-        std::cout << "Time till refresh: " << m_refresh_time.GetMilliSeconds() - Simulator::Now().GetMilliSeconds() << std::endl;
-        for (auto it = m_cache.begin(); it != m_cache.end(); ++it) {
-            const std::tuple<uint32_t, uint32_t, uint16_t, uint16_t>& key = it->first;
-            const std::tuple<uint32_t, uint8_t, double, Time>& value = it->second;
-
-            uint32_t src_ip = std::get<0>(key);
-            uint32_t dst_ip = std::get<1>(key);
-            uint16_t src_port = std::get<2>(key);
-            uint16_t dst_port = std::get<3>(key);
-
-            uint32_t next_if = std::get<0>(value);
-            uint8_t ttl_min = std::get<1>(value);
-            double fullness = std::get<2>(value);
-            Time timestamp = std::get<3>(value);
-            
-
-            auto ms = timestamp.GetMilliSeconds();
-            ms = ms < 0 ? 0 : ms;
-
-            std::cout << "("
-                    << src_ip << ", "
-                    << dst_ip << ", "
-                    << src_port << ", "
-                    << dst_port << ") -> "
-                    << "(n_if: "
-                    << next_if << ", ttl_min: "
-                    << static_cast<int>(ttl_min) << ", Fullness:"
-                    << fullness << ", "
-                    << "ms till expiry: " << ms
-                    << ")\n";
-        }
-    }
-
 
     int32_t ArbiterGSPriorityDeflection::GetNewCacheValue(
             const PacketRoutingContext& context,
@@ -576,7 +596,6 @@ namespace ns3 {
                             ||  filled_ratio > threshold + THRESHOLD_SIZE
                             ));
 
-        //PRE: value is in the cache already
         if (recompute) {
             return GetNewCacheValue(context, key);
         } else {
@@ -603,20 +622,31 @@ namespace ns3 {
 
     std::pair<ArbiterGSPriorityDeflection::PacketRoutingContext, std::vector<size_t>> 
     ArbiterGSPriorityDeflection::RemoveUsedHops(const PacketRoutingContext& context) {
-        LastDeflectionTag tag(context.pkt);
-        const std::vector<int>& blacklist = tag.GetPath();
+        LastDeflectionTag tag;
+        context.pkt->PeekPacketTag(tag);
+        const std::vector<int>& blacklist = { tag.GetLastNode() };  // for the lastdeflection tag, we 
 
         std::vector<std::tuple<int32_t, int32_t, int32_t>> filteredHops;
+        std::vector<double> filteredWeights;
         std::vector<size_t> preservedIndices; // This tracks original indices that are preserved
 
+        
         for (size_t i = 0; i < context.nextHopOptions.size(); ++i) {
             const auto& hop = context.nextHopOptions[i];
-            int32_t nodeId = std::get<0>(hop); 
+            int32_t nodeId = std::get<0>(hop);
+
             if (std::find(blacklist.begin(), blacklist.end(), nodeId) == blacklist.end()) {
                 filteredHops.push_back(hop);
                 preservedIndices.push_back(i);
+                if (i > 0) {
+                    filteredWeights.push_back(context.weights[i - 1]);
+                }
+                
             }
         }
+        
+        
+        Normalize(filteredWeights);
         if (VERBOSE) {
             // Inline print Original
             std::cout << "Original: [";
@@ -653,8 +683,10 @@ namespace ns3 {
             context.pkt,
             context.ipHeader,
             context.isRequestForSourceIpNoNextHeader,
-            filteredHops
+            filteredHops,
+            filteredWeights,
         };
+    
 
         return {newContext, preservedIndices};
     }
@@ -664,41 +696,36 @@ namespace ns3 {
             const PacketRoutingContext& context,
             std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
     ) {
+        
         //if we need to forward or drop
         uint8_t ttl = context.ipHeader.GetTtl();
-        LastDeflectionTag tag(context.pkt);
-        bool urgent = ttl < 3 || tag.GetPath().size() > MAX_DEFLECTIONS;
+        LastDeflectionTag tag;
+        bool urgent = ttl < 3 || (context.pkt->PeekPacketTag(tag) && tag.GetNumDeflections() > MAX_DEFLECTIONS);
         bool new_flow = m_cache.find(key) == m_cache.end();
+    
         
         // If ttl is too low to deflect or too many deflection occured
         if (urgent) {
             return  GetUrgentCacheValue(context, key);   
         }
         
+        // generate new context and a mapping to the old context's forwarding table
         auto result = RemoveUsedHops(context);
-        PacketRoutingContext new_context = result.first;
-        std::vector<size_t> preservedIndices = result.second;
-
         int32_t idx;
-        // If flow is not in the cache
-        if (new_flow) { 
-            idx = GetNewCacheValue(context, key);
-        } 
-
-        // If we have this flow in our cache
-        else { 
-            idx = GetUsedCacheValue(context, key);
+        
+        if (new_flow) {  // If flow is not in the cache
+            idx = result.second[GetNewCacheValue(result.first, key)];
+        } else { // If we have this flow in our cache
+            idx = result.second[GetUsedCacheValue(result.first, key)];
         }
 
         //if error, drop
         if (idx < 0 || idx >= int(context.nextHopOptions.size())) { return -1; }
+
         return idx;
-        
     }
 
-    int32_t ArbiterGSPriorityDeflection::CacheHasheFunc(
-            const PacketRoutingContext& context
-    ) {        
+    int32_t ArbiterGSPriorityDeflection::CacheHasheFunc(const PacketRoutingContext& context) {        
         // get key for cache
         uint32_t src_ip = context.ipHeader.GetSource().Get();
         uint32_t dst_ip = context.ipHeader.GetDestination().Get();
@@ -708,7 +735,6 @@ namespace ns3 {
 
         //print cache info
         if (false && VERBOSE && context.pkt) {
-            PrintFlowFromIpv4Header(context);
             PrintCache();
         } 
 
@@ -720,5 +746,5 @@ namespace ns3 {
         // check if we should compute/recompute the entry
         return GetCacheValue(context, key);
     }
-    
+
 }
