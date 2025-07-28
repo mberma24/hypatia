@@ -32,7 +32,8 @@
 #include "ns3/last-deflection-tag.h"
 
 
-using TimePoint = std::chrono::steady_clock::time_point;
+using CacheKey = std::tuple<uint32_t, uint32_t, uint16_t, uint16_t>;
+using CacheValue = std::tuple<uint32_t, uint8_t, double, ns3::Time>;
 
 struct FlowKey {
     ns3::Ipv4Address srcIp;
@@ -142,15 +143,14 @@ private:
     // context for routing a packet
     struct PacketRoutingContext {
             ns3::Ptr<const ns3::Packet> pkt;                                    // the packet
-            const ns3::Ipv4Header& ipHeader;                                    // ip header for the packet
-            bool isRequestForSourceIpNoNextHeader;                              // true if this is a request targeting the source ip
-            std::vector<std::tuple<int32_t, int32_t, int32_t>> nextHopOptions;  // list of options to forward the packet to
-            
-            std::vector<double> weights;
+            const ns3::Ipv4Header& ip_header;                                    // ip header for the packet
+            bool is_request_for_source_ip_no_next_header;                              // true if this is a request targeting the source ip
+            std::vector<std::tuple<int32_t, int32_t, int32_t>> next_hop_options;  // list of options to forward the packet to
+            const int32_t target_node_id;
     }; 
 
     // map of target ground station to weights for nodes to deflection to
-    std::unordered_map<int32_t, std::vector<double>> m_weights;
+    std::unordered_map<int32_t, std::unordered_map<int32_t, double>> m_weights;
     
     // list of lists of next hops, per node id (forwarding table)
     std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>> 
@@ -158,34 +158,96 @@ private:
 
     // cache used for per flow deflection
     // (src ip, dst ip, src port, dst port) : [next_if, ttl_limit, queue_fullness, experiation time] 
-    std::unordered_map
-        <
-            std::tuple<uint32_t,uint32_t,uint16_t,uint16_t>, 
-            std::tuple<uint32_t, uint8_t, double, Time>, 
-            TupleHash
-        > m_cache; 
+    std::unordered_map<CacheKey, CacheValue, TupleHash> m_cache; 
         
     // how long until the cache will clear itself
     Time m_refresh_time;    
-    // how long until the weights will go back to normal
-    Time m_uniform_time; 
-    std::unordered_map<int32_t, Time> m_update_times; 
 
+    // each maps a target ground station to some timer
+    std::unordered_map<int32_t, Time> m_weight_decay_timer; 
+    std::unordered_map<int32_t, Time> m_weight_update_timer; 
+
+
+    /*********************
+        CACHE FUNCTIONS 
+     *********************/
 
     /**
-     * Prints out infomation about a flow given an IP header (src/dst ip+port, protocol) from some packet.
+     * Given some packet and a list of options to forward to, determine where
+     * to send the packet based on and while maintaining this nodes cache.
      *
      * @param context       The packet/routing context for this forwarding decision.
+     * 
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
      */
-    void PrintFlowFromIpv4Header(const PacketRoutingContext& context);
+    int32_t CacheDecideDeflection(const PacketRoutingContext& context);
 
     /**
-     * Prints out infomation about this nodes cache
+     * Gets the value from a cache, possibly generating a new/recomputing the cache entry.
+     *
+     * @param context       The packet/routing context for this forwarding decision. 
+     * @param key           The key of this packets flow in cache.
+     * 
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context
      */
-    void PrintCache();
+    int32_t GetCacheValue(
+            const PacketRoutingContext& context,
+            std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
+    );
 
-    void CheckDecayWeights(int32_t target_node_id);
-    void HandleWeights(PacketRoutingContext& context, int32_t target_node_id);
+    /**
+     * If too many deflections have occured or the TTL is now 1, this packet is marked urgent.
+     * When urgent, the arbiter decides wether to forward directly to its ground station or to drop
+     * the packet.
+     *
+     * @param context       The packet/routing context for this forwarding decision.  
+     * @param key           The key of this packets flow in cache.
+     * 
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
+     */
+    int32_t GetUrgentCacheValue(const PacketRoutingContext& context, CacheKey key);
+
+    /**
+     * Generates the cache entry given no previous entry exists for this key in our cache.
+     *
+     * @param context       The packet/routing context for this forwarding decision.  
+     * @param key           The key of this packets flow in cache.
+     * 
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
+     */
+    int32_t GetNewCacheValue(const PacketRoutingContext& context, CacheKey key);
+
+    /**
+     * Generates the cache entry given some entry exists for this key in our cache.
+     *
+     * @param context       The packet/routing context for this forwarding decision.  
+     * @param key           The key of this packets flow in cache.
+     * 
+     * @return              The index to forward to, chosen from the forwarding options
+     *                      inside of @p context.
+     */
+    int32_t GetUsedCacheValue(const PacketRoutingContext& context, CacheKey key);
+
+    /*********************
+        next FUNCTIONS 
+     *********************/
+
+
+    bool HandleBasicHopErrors(
+            const std::vector<std::tuple<int32_t, int32_t, int32_t>> &next_hops,
+            int32_t& next_node_id, 
+            int32_t& my_if_id,
+            int32_t& next_if_id
+    );
+
+
+    
+
+
 
     /**
      * Given the index of the checkpoint flag we want, returns said flag.
@@ -278,7 +340,9 @@ private:
      * @param weights       The weights, representing our likeliehood to deflect out of each forwarding
      *                      table entry.
      */
-    void Normalize(std::vector<double>& weights);
+    void Normalize(std::unordered_map<int32_t, double>& map);
+
+    void Normalize(std::vector<double>& vector);
 
     /**
      * Decays each weight in the vector, moving them all towards being uniform.
@@ -286,7 +350,7 @@ private:
      * @param weights       The weights, representing our likeliehood to deflect out of each forwarding
      *                      table entry.
      */
-    void DecayWeight(std::vector<double>& weights);
+    void Decay(std::unordered_map<int32_t, double>& map);
 
     /**
      * Increases a specific weight in the given vector, while decreasing other weights.
@@ -295,10 +359,32 @@ private:
      *                      table entry.
      * @param i             The index of the weight we are bumping.
      */
-    void BumpWeight(std::vector<double>& weights, size_t i);
+    void BumpUp(std::unordered_map<int32_t, double>& map, int32_t node_id);
 
-    void BumpDownWeight(std::vector<double>& weights, size_t i);
+    void BumpDown(std::unordered_map<int32_t, double>& map, int32_t node_id);
+
+    void CreateWeights(const PacketRoutingContext& context);
+
+    void MaintainWeights(const PacketRoutingContext& context);
     
+    void HandleWeights(const PacketRoutingContext& context);
+
+    void CheckBumpWeights(const PacketRoutingContext& context);
+
+    /**
+     * Creates a new context object the forwarding table is updates to not include deflections we have 
+     * already done.
+     *
+     * @param context       The packet/routing context for this forwarding decision.  
+     * 
+     * @return              A tuple which contrains:
+     *                          The new context which contains the new forwarding table,
+     *                          A vector mapping indices of new forwarding table to the old one. 
+     *                          A vector represeting normalized weights for the new hop list
+     */
+    std::tuple<PacketRoutingContext, std::vector<size_t>, std::vector<double>>  
+    RemoveUsedHops(const PacketRoutingContext& context);
+
     /**
      * Choose where to deflect to.
      *
@@ -307,7 +393,7 @@ private:
      * @return              The index to forward to, chosen from the forwarding options
      *                      inside of @p context.
      */
-    int32_t ChooseIDX(const PacketRoutingContext& context);
+    int32_t Deflect(const PacketRoutingContext& context, std::vector<double> weights);
 
     /**
      * Given some packet and a list of options to forward to, determine where
@@ -318,89 +404,29 @@ private:
      * @return              The index to forward to, chosen from the forwarding options
      *                      inside of @p context.
      */
-    int32_t HashFunc(const PacketRoutingContext& context);
+    int32_t DecideDeflection(const PacketRoutingContext& context);
 
-    /**
-     * Generates the cache entry given no previous entry exists for this key in our cache.
-     *
-     * @param context       The packet/routing context for this forwarding decision.  
-     * @param key           The key of this packets flow in cache.
-     * 
-     * @return              The index to forward to, chosen from the forwarding options
-     *                      inside of @p context.
-     */
-    int32_t GetNewCacheValue(
-            const PacketRoutingContext& context,
-            std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
-    );
 
-    /**
-     * Generates the cache entry given some entry exists for this key in our cache.
-     *
-     * @param context       The packet/routing context for this forwarding decision.  
-     * @param key           The key of this packets flow in cache.
-     * 
-     * @return              The index to forward to, chosen from the forwarding options
-     *                      inside of @p context.
-     */
-    int32_t GetUsedCacheValue(
-            const PacketRoutingContext& context,
-            std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
-    );
+    std::tuple<int32_t, int32_t, int32_t> HandleSpecialIDX(const PacketRoutingContext&context, int32_t n_if);
 
-    /**
-     * If too many deflections have occured or the TTL is now 1, this packet is marked urgent.
-     * When urgent, the arbiter decides wether to forward directly to its ground station or to drop
-     * the packet.
-     *
-     * @param context       The packet/routing context for this forwarding decision.  
-     * @param key           The key of this packets flow in cache.
-     * 
-     * @return              The index to forward to, chosen from the forwarding options
-     *                      inside of @p context.
-     */
-    int32_t GetUrgentCacheValue(
-            const PacketRoutingContext& context,
-            std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
+    void MarkPacket(Ptr<const Packet> pkt);
 
-    );
+    /*********************
+        HASHING FUNCTIONS 
+     *********************/
 
-    /**
-     * Creates a new context object the forwarding table is updates to not include deflections we have 
-     * already done.
-     *
-     * @param context       The packet/routing context for this forwarding decision.  
-     * 
-     * @return              A pair of the new context which contains the new forwarding table,
-     *                      and a vector mapping indices of new forwarding table to the old one. 
-     */
-    std::pair<ArbiterGSPriorityDeflection::PacketRoutingContext, std::vector<size_t>> 
-    RemoveUsedHops(const PacketRoutingContext& context);
 
-    /**
-     * Gets the value from a cache, possibly generating a new/recomputing the cache entry.
-     *
-     * @param context       The packet/routing context for this forwarding decision. 
-     * @param key           The key of this packets flow in cache.
-     * 
-     * @return              The index to forward to, chosen from the forwarding options
-     *                      inside of @p context
-     */
-    int32_t GetCacheValue(
-            const PacketRoutingContext& context,
-            std::tuple<uint32_t, uint32_t, uint16_t, uint16_t> key
-    );
     
+
+    /********************
+        DEBUG FUNCTIONS 
+     ********************/
+
     /**
-     * Given some packet and a list of options to forward to, determine where
-     * to send the packet based on and while maintaining this nodes cache.
-     *
-     * @param context       The packet/routing context for this forwarding decision.
-     * 
-     * @return              The index to forward to, chosen from the forwarding options
-     *                      inside of @p context.
+     * Prints out infomation about this nodes cache
      */
-    int32_t CacheHasheFunc(const PacketRoutingContext& context);
+    void PrintCache();
+    
 };
 
 }
