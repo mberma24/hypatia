@@ -59,18 +59,25 @@ def plot_cdf_aggregates(files):
     }
 
     duration_styles = {
-        '1s': {'linestyle': '-', 'marker': 'o'},
-        '10s': {'linestyle': '--', 'marker': 'x'},
+        '1s':  {'linestyle': '-',  'marker': 'o'},
+        '5s':  {'linestyle': '--', 'marker': 's'},
+        '10s': {'linestyle': '-.', 'marker': '^'},
+        '50s': {'linestyle': ':',  'marker': 'd'}
     }
+
 
     for filepath in files:
         aggregates = parse_aggregate_sent_per_source(filepath)
 
-        if filepath.endswith("10s.txt"):
-            duration = '10s'
-            aggregates = [x / 10 for x in aggregates]
+        duration_match = re.search(r"(\d+)s\.txt$", filepath)
+        if duration_match:
+            seconds = int(duration_match.group(1))
+            duration = f"{seconds}s"
+            aggregates = [x / seconds for x in aggregates]
         else:
+            print(f"Warning: couldn't detect duration in filename {filepath}. Assuming 1s.")
             duration = '1s'
+
 
         if not aggregates:
             print(f"No valid data in {filepath}, skipping.")
@@ -119,12 +126,25 @@ def plot_cdf_aggregates(files):
 
 # === Example Usage ===
 filepaths = [
-    # "./tcp_flows_sf1s.txt",
-    # "./tcp_flows_ddef1s.txt",
-    # "./tcp_flows_cache1s.txt",
-    "./tcp_flows_sf10s.txt",
-    "./tcp_flows_ddef10s.txt",
-    "./tcp_flows_cache10s.txt",
+    #"./tcp_flows_sf1s.txt",
+    #"./tcp_flows_ddef1s.txt",
+    #"./tcp_flows_cache1s.txt",
+    #"./tcp_flows_sf10s.txt",
+    #"./tcp_flows_ddef10s.txt",
+    #"./tcp_flows_mcache1s.txt",
+    #"./tcp_flows_mcache5s.txt",
+    #"./tcp_flows_mcache10s.txt",
+    #"./tcp_flows_mcache50s.txt",
+    #"./tcp_flows_cache50s.txt",
+    #"flows/tcp_flows_sf50s.txt",
+    "flows/tcp_flows_100f_sf50s.txt",
+    #"flows/tcp_flows_10f_50s.txt",
+    "flows/tcp_flows_r_100f_cache50s.txt",
+    "flows/tcp_flows_100f_cache50s.txt",
+    #"runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows_50s.txt",
+    #"./runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows_50s.txt"
+    #"./tcp_flows_scache50s.txt",
+
 
 ]  # Replace or expand as needed
 plot_cdf_aggregates(filepaths)

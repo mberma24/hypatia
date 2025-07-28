@@ -1,72 +1,105 @@
+import re
+from collections import defaultdict
 import matplotlib.pyplot as plt
 import numpy as np
-import re
+from itertools import product
+from random import shuffle
 
-def extract_sent_values(filepath):
-    sent_values = []
-    # Regex pattern to capture the sent data in Mbit (the 8th logical field with Mbit unit)
-    pattern = re.compile(
-        r"""^\s*\d+\s+            # Flow ID (skip)
-            \d+\s+                # Source (skip)
-            \d+\s+                # Target (skip)
-            [\d.]+\s+Mbit\s+      # Size (skip)
-            \d+\s+                # Start time (skip)
-            \d+\s+                # End time (skip)
-            [\d.]+\s+ms\s+        # Duration (skip)
-            ([\d.]+)\s+Mbit       # Sent value (capture)
-        """, re.VERBOSE)
+color_idx = 0
 
+def parse_aggregate_sent_per_source(filepath):
+    source_sent = defaultdict(list)
     with open(filepath) as f:
         for line in f:
             if line.strip().startswith("TCP") or not line.strip():
-                continue  # Skip header or empty lines
-
-            m = pattern.match(line)
-            if m:
-                sent = float(m.group(1))
-                sent_values.append(sent)
+                continue
+            match = re.match(
+                r"^\s*(\d+)\s+(\d+)\s+(\d+)\s+[\d.]+\s+Mbit\s+\d+\s+\d+\s+[\d.]+\s+ms\s+([\d.]+)\s+Mbit", line
+            )
+            if match:
+                _, source, _, sent = match.groups()
+                source = int(source)
+                sent = float(sent)
+                source_sent[source].append(sent)
             else:
-                # Optionally print skipped malformed lines if debugging
-                # print("Skipping malformed line:", line.strip())
-                pass
-    return sent_values
+                print(f"Skipping malformed line in {filepath}:", line.strip())
+    return [sum(vals) for vals in source_sent.values()]
 
-# Define datasets
-files = {
-    "DDEF1": "./tcp_flows_ddef1.txt",
-    "DDEF2": "./tcp_flows_ddef2.txt",
-    "Cache1": "./tcp_flows_cache1.txt",
-    "Cache2": "./tcp_flows_cache2.txt",
-    "SF": "./tcp_flows_sf.txt"
-}
+def plot_cdf_aggregates(files):
+    plt.figure(figsize=(10, 6))
 
-plt.figure(figsize=(12, 7))
+    # Create many unique visual combinations
+    colors = ['blue', 'green', 'red', 'orange', 'purple', 'cyan', 'brown', 'gray', 'pink', 'olive']
+    markers = ['o', 's', '^', 'D', 'v', 'P', '*', 'x', '<', '>']
 
-colors = ['blue', 'green', 'red', 'orange', 'black']
-markers = ['o', 's', '^', 'x', 'D']
+    # Use only color+marker combinations (not linestyle) to distinguish
+    style_combinations = list(product(colors, markers))
+    shuffle(style_combinations)
+    style_map = {}
 
-for i, (label, filepath) in enumerate(files.items()):
-    sent_values = extract_sent_values(filepath)
-    if not sent_values:
-        print(f"[{label}] No valid sent data found.")
-        continue
+    for filepath in files:
+        aggregates = parse_aggregate_sent_per_source(filepath)
 
-    sent_values.sort()
-    n = len(sent_values)
-    cdf = [j / n for j in range(1, n + 1)]
+        duration_match = re.search(r"(\d+)s\.txt$", filepath)
+        if duration_match:
+            seconds = int(duration_match.group(1))
+            duration = f"{seconds}s"
+            aggregates = [x / seconds for x in aggregates]
+        else:
+            print(f"Warning: couldn't detect duration in filename {filepath}. Assuming 1s.")
+            duration = '1s'
 
-    mean = np.mean(sent_values)
-    median = np.median(sent_values)
-    num_zero = sum(1 for v in sent_values if v == 0)
+        if not aggregates:
+            print(f"No valid data in {filepath}, skipping.")
+            continue
 
-    rich_label = f"{label} (mean={mean:.2f}, med={median:.2f}, 0s={num_zero})"
-    plt.plot(sent_values, cdf, label=rich_label, color=colors[i], marker=markers[i], linestyle='-', markersize=4)
+        # Get a unique style per *file*
+        if filepath not in style_map:
+            if not style_combinations:
+                raise ValueError("Ran out of unique (color, marker) combinations!")
+            style_map[filepath] = style_combinations.pop(0)
 
-plt.xlabel("Sent Data per Flow (Mbit)", fontsize=12)
-plt.ylabel("CDF", fontsize=12)
-plt.title("CDF of Sent Data Across Configurations", fontsize=14)
-plt.grid(True)
-plt.legend()
-plt.tight_layout()
-plt.savefig("cdf_sent_comparison_rich.png")
-print("Saved plot as cdf_sent_comparison_rich.png")
+        color, marker = style_map[filepath]
+
+        data = np.sort(aggregates)
+        cdf = np.arange(1, len(data) + 1) / len(data)
+
+        label = f"{filepath.split('/')[-1]}"
+
+        plt.plot(
+            data, cdf,
+            label=label,
+            color=color,
+            linestyle='-',  # use same line style for all
+            marker=marker,
+            linewidth=1.2,
+            markersize=4,
+        )
+        
+
+
+    plt.xlabel("Aggregate Sent per Ground Station (Mbit/s)", fontsize=11)
+    plt.ylabel("CDF", fontsize=11)
+    plt.title("CDF of Aggregate Sent per Ground Station", fontsize=13)
+    plt.legend(fontsize=9)
+    plt.grid(True, linewidth=0.3)
+    plt.yticks(np.arange(0, 1.01, 0.1))
+    plt.tight_layout()
+    plt.xticks(np.arange(0, 40, 2))
+    plt.savefig("cdf_sent_GScomparison_rich.png", dpi=150)
+    print("Saved plot as cdf_sent_GScomparison_rich.png")
+
+    print("\nAssigned styles per file:")
+    for file, (color, marker) in style_map.items():
+        print(f"{file}: color={color}, marker={marker}")
+
+# === Example Usage ===
+filepaths = [
+    "flows/competing_kept/tcp_flows_100f_rcache50s.txt",
+    "flows/competing_kept/tcp_flows_100f_lcache50s.txt",
+    "flows/competing_removed/tcp_flows_100f_dcache50s.txt",
+    "flows/competing_removed/tcp_flows_100f_rcache50s.txt",
+    "flows/competing_removed/tcp_flows_100f_lcache50s.txt",
+    "flows/competing_removed/tcp_flows_100f_dcache50s.txt"
+]
+plot_cdf_aggregates(filepaths)

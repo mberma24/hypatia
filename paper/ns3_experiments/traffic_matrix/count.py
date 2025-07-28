@@ -1,6 +1,8 @@
 import re
 from collections import defaultdict
 
+TIME = 50
+
 source_sent = defaultdict(list)
 
 def parse_aggregate_sent_per_source(filepath):
@@ -26,22 +28,23 @@ def parse_aggregate_sent_per_source(filepath):
     aggregates = [(source, sum(vals)) for source, vals in source_sent.items()]
     return aggregates
 
-total_pairs_m = parse_aggregate_sent_per_source("/home/sat/hypatia/paper/ns3_experiments/traffic_matrix/runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows.txt")
-#total_pairs_m = parse_aggregate_sent_per_source("tcp_flows_cache10s.txt")
-total_pairs_s = parse_aggregate_sent_per_source("/home/sat/hypatia/paper/ns3_experiments/traffic_matrix/runs/run_general_tm_pairing_kuiper_isls_static/logs_ns3/tcp_flows.txt")
-total_pairs_s = total_pairs_m
-totals_m = [agg for _, agg in total_pairs_m]
+#total_pairs_m = parse_aggregate_sent_per_source("./runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows_50s.txt")
+total_pairs_m = parse_aggregate_sent_per_source("./flows/tcp_flows_100f_cache50s.txt")
+#total_pairs_s = parse_aggregate_sent_per_source("./runs/run_general_tm_pairing_kuiper_isls_static/logs_ns3/tcp_flows.txt")
+#total_pairs_s = parse_aggregate_sent_per_source("./flows/tcp_flows_sf1s.txt")
+total_pairs_s =total_pairs_m
+totals_m = [agg / TIME for _, agg in total_pairs_m]
 overall_average_m = sum(totals_m) / len(totals_m)
-totals_s = [agg for _, agg in total_pairs_s]
+totals_s = [agg / TIME for _, agg in total_pairs_s]
 overall_average_s = sum(totals_s) / len(totals_s)
 #
 print("\nMOVING:")
 for (src, avg) in total_pairs_m:
-    print(f"Source {src}: Aggregate Sent = {avg:.2f} Mbit")
+    print(f"Source {src}: Aggregate Sent = {avg / TIME:.2f} Mbit")
 
 print("\nSTATIC:")
 for (src, avg) in total_pairs_s:
-    print(f"Source {src}: Aggregate Sent = {avg:.2f} Mbit")
+    print(f"Source {src}: Aggregate Sent = {avg / TIME:.2f} Mbit")
 
 print("Static overall average: ", overall_average_m)
 print("Moving overall average: ", overall_average_s)
