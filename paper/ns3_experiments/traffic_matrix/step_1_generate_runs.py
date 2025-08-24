@@ -187,10 +187,23 @@ for traffic_mode in ["general"]:
             #     seed_from_to
             # )
             list_from_to = []
-            for i in range(1156, 1256, 2):
-                if i + 1 <= 1256:
-                    list_from_to.append((i, i + 1))
-            list_from_to = list_from_to * 100
+            # for i in range(1156, 1256, 2):
+            #     if i + 1 <= 1256:
+            #         list_from_to.append((i, i + 1))
+            
+            available = []
+            for i in range(1156, 1256):
+                available.append(i)
+
+            random.shuffle(available)
+            count = 0
+            while count < 50:
+                src = available.pop()
+                dst = available.pop()
+                list_from_to.append((src, dst))
+                count += 1
+                
+            list_from_to = list_from_to * 10
 
         else:
             raise ValueError("Unknown traffic mode: " + traffic_mode)

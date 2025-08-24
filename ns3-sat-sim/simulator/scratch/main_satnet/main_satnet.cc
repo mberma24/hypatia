@@ -42,16 +42,79 @@
 #include "ns3/ipv4-arbiter-routing-helper.h"
 #include "ns3/gsl-if-bandwidth-helper.h"
 #include "ns3/packet-loss-counter.h"
+#include "ns3/tcp-flow-sink-helper.h"
 
 
 #include "ns3/flow-monitor-helper.h"
 #include "ns3/flow-monitor.h"
 
 
+#include "ns3/packet.h"
+#include "ns3/ipv4-header.h"
+#include "ns3/ipv6-header.h"
+#include "ns3/tcp-header.h"
+#include "ns3/udp-header.h"
+#include "ns3/point-to-point-net-device.h"
+#include "ns3/ethernet-header.h"
+
+
+#include "ns3/packet.h"
+
+// Network headers
+#include "ns3/ipv4-header.h"
+#include "ns3/ipv6-header.h"
+
+// Transport headers
+#include "ns3/tcp-header.h"
+#include "ns3/udp-header.h"
+
+// Link / MAC headers
+#include "ns3/ethernet-header.h"
+#include "ns3/wifi-mac-header.h"
+#include "ns3/lr-wpan-mac-header.h"
+#include "ns3/sll-header.h"
+#include "ns3/ppp-header.h"
+#include "ns3/radiotap-header.h"
+#include "ns3/aloha-noack-mac-header.h"
+#include "ns3/ampdu-subframe-header.h"
+#include "ns3/amsdu-subframe-header.h"
+
+// LTE / Cellular headers
+#include "ns3/lte-pdcp-header.h"
+#include "ns3/lte-rlc-header.h"
+#include "ns3/lte-rlc-am-header.h"
+#include "ns3/epc-gtpc-header.h"
+#include "ns3/epc-gtpu-header.h"
+#include "ns3/epc-x2-header.h"
+#include "ns3/lte-rrc-header.h"
+#include "ns3/lte-asn1-header.h"
+
+// Routing / control headers
+#include "ns3/rip-header.h"
+#include "ns3/ripng-header.h"
+#include "ns3/arp-header.h"
+#include "ns3/icmpv6-header.h"
+
+// Application / sim-specific headers
+#include "ns3/seq-ts-header.h"
+#include "ns3/seq-ts-size-header.h"
+#include "ns3/three-gpp-http-header.h"
+#include "ns3/epc-gtpu-header.h"
+
+
+
+
+
+
 using namespace ns3;
+// Add these includes at the top of your file
+#include "ns3/config.h"
+#include "ns3/callback.h"
+#include "ns3/packet.h"
+#include "ns3/address.h"
+#include "ns3/tcp-header.h"
 
-
-
+#include "ns3/trace-source-accessor.h"
 
 
 
@@ -74,21 +137,17 @@ int main(int argc, char *argv[]) {
     // Load basic simulation environment
     Ptr<BasicSimulation> basicSimulation = CreateObject<BasicSimulation>(run_dir);
 
-
-
-
     // Setting socket type
     Config::SetDefault ("ns3::TcpL4Protocol::SocketType", StringValue ("ns3::" + basicSimulation->GetConfigParamOrFail("tcp_socket_type")));
-
+    Config::Set("/TcpFlowScheduler/EnableLogging", BooleanValue(true));
     // Optimize TCP
     TcpOptimizer::OptimizeBasic(basicSimulation);
 
     // Read topology, and install routing arbiters
     Ptr<TopologySatelliteNetwork> topology = CreateObject<TopologySatelliteNetwork>(basicSimulation, Ipv4ArbiterRoutingHelper());
 
-    //ArbiterSingleForwardHelper arbiterHelper(basicSimulation, topology->GetNodes());
-    //ArbiterDeflectionHelper arbiterHelper(basicSimulation, topology->GetNodes());
-    ArbiterGSPriorityDeflectionHelper arbiterHelper(basicSimulation, topology->GetNodes());//arbiterHelper(basicSimulation, topology->GetNodes());
+
+    ArbiterGSPriorityDeflectionHelper arbiterHelper(basicSimulation, topology->GetNodes());
     GslIfBandwidthHelper gslIfBandwidthHelper(basicSimulation, topology->GetNodes());
 
     // Schedule flows
@@ -102,18 +161,6 @@ int main(int argc, char *argv[]) {
 
     std::srand(std::time(nullptr));
 
-    // LogComponentEnable("TcpL4Protocol", ns3::LOG_LEVEL_INFO);
-    // LogComponentEnable("TcpSocketBase", ns3::LOG_LEVEL_INFO);
-    
-    // FlowMonitorHelper flowmon;
-    // Ptr<FlowMonitor> monitor = flowmon.InstallAll();
-
-    // LogComponentEnable("FlowMonitor", LOG_LEVEL_INFO);
-
-
-
-
-    
     // Run simulation
     basicSimulation->Run();
 
@@ -132,8 +179,7 @@ int main(int argc, char *argv[]) {
     // Finalize the simulation
     basicSimulation->Finalize();
 
-
+    
 
     return 0;
-
 }

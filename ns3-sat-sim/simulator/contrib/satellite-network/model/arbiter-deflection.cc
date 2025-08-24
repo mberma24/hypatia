@@ -58,61 +58,6 @@ public:
     void Print (std::ostream &os) const override { os << "DeflectionMark"; }
 };
 
-std::tuple<int32_t, int32_t, int32_t> ArbiterDeflection::TopologySatelliteNetworkDecide(
-        int32_t source_node_id,
-        int32_t target_node_id,
-        Ptr<const Packet> pkt,
-        Ipv4Header const &ipHeader,
-        bool is_request_for_source_ip_so_no_next_header
-) {
-    // Hash-based selection of next hop
-    const auto& next_hops = m_next_hop_list[target_node_id];
-    if (next_hops.empty()) {
-        // Return an invalid entry if no next hops are available
-        return std::make_tuple(-2, -2, -2);
-    }
-
-    // Check if packet is already marked
-    bool isMarked = false;
-    if (pkt) {
-        DeflectionMarkTag tag;
-        isMarked = pkt->PeekPacketTag(tag);
-    }
-
-    uint32_t idx = 0;
-    if (!isMarked) {
-        // Per-flow selection: hash the 5-tuple (src IP, dst IP, protocol, src port, dst port)
-        uint32_t src_ip = ipHeader.GetSource().Get();
-        uint32_t dst_ip = ipHeader.GetDestination().Get();
-        uint8_t proto = ipHeader.GetProtocol();
-        uint16_t src_port = 0, dst_port = 0;
-        if (!is_request_for_source_ip_so_no_next_header) {
-            if (proto == 6) { // TCP
-                TcpHeader tcpHeader;
-                pkt->PeekHeader(tcpHeader);
-                src_port = tcpHeader.GetSourcePort();
-                dst_port = tcpHeader.GetDestinationPort();
-            } else if (proto == 17) { // UDP
-                UdpHeader udpHeader;
-                pkt->PeekHeader(udpHeader);
-                src_port = udpHeader.GetSourcePort();
-                dst_port = udpHeader.GetDestinationPort();
-            }
-        }
-        uint32_t hash = src_ip ^ (dst_ip << 1) ^ (proto << 2) ^ (src_port << 3) ^ (dst_port << 4);
-        idx = hash % next_hops.size();
-        if (idx != 0 && pkt) {
-            // Mark the packet
-            Ptr<Packet> nonConstPkt = const_cast<Packet*>(PeekPointer(pkt));
-            DeflectionMarkTag tag;
-            nonConstPkt->AddPacketTag(tag);
-        }
-    } // else idx remains 0 if marked
-
-    
-    return next_hops[idx];
-}
-
 // std::tuple<int32_t, int32_t, int32_t> ArbiterDeflection::TopologySatelliteNetworkDecide(
 //         int32_t source_node_id,
 //         int32_t target_node_id,
@@ -127,41 +72,96 @@ std::tuple<int32_t, int32_t, int32_t> ArbiterDeflection::TopologySatelliteNetwor
 //         return std::make_tuple(-2, -2, -2);
 //     }
 
-//     uint32_t src_ip = ipHeader.GetSource().Get();
-//     uint32_t dst_ip = ipHeader.GetDestination().Get();
-//     uint8_t proto = ipHeader.GetProtocol();
-//     uint8_t ttl = ipHeader.GetTtl();
-//     uint16_t src_port = 0;
-//     uint16_t dst_port = 0;
-
-
-//     if (proto == 6) { // TCP
-//         TcpHeader tcpHeader;
-//         pkt->PeekHeader(tcpHeader);
-//         src_port = tcpHeader.GetSourcePort();
-//         dst_port = tcpHeader.GetDestinationPort();
-//     } else if (proto == 17) { // UDP
-//         UdpHeader udpHeader;
-//         pkt->PeekHeader(udpHeader);
-//         src_port = udpHeader.GetSourcePort();
-//         dst_port = udpHeader.GetDestinationPort();
+//     // Check if packet is already marked
+//     bool isMarked = false;
+//     if (pkt) {
+//         DeflectionMarkTag tag;
+//         isMarked = pkt->PeekPacketTag(tag);
 //     }
 
-
-//     uint32_t hash = src_ip;
-//     hash ^= (dst_ip << 7) | (dst_ip >> 25);
-//     hash ^= (proto << 13);
-//     hash ^= (src_port << 3) | (src_port >> 13);
-//     hash ^= (dst_port << 11) | (dst_port >> 5);
-//     hash ^= (ttl << 17) | (ttl >> 3);
-//     // Mix with a large prime
-//     hash *= 2654435761u;
-//     hash ^= (hash >> 16);
-//     uint32_t idx = hash % next_hops.size();
+//     uint32_t idx = 0;
+//     if (!isMarked) {
+//         // Per-flow selection: hash the 5-tuple (src IP, dst IP, protocol, src port, dst port)
+//         uint32_t src_ip = ipHeader.GetSource().Get();
+//         uint32_t dst_ip = ipHeader.GetDestination().Get();
+//         uint8_t proto = ipHeader.GetProtocol();
+//         uint16_t src_port = 0, dst_port = 0;
+//         if (!is_request_for_source_ip_so_no_next_header) {
+//             if (proto == 6) { // TCP
+//                 TcpHeader tcpHeader;
+//                 pkt->PeekHeader(tcpHeader);
+//                 src_port = tcpHeader.GetSourcePort();
+//                 dst_port = tcpHeader.GetDestinationPort();
+//             } else if (proto == 17) { // UDP
+//                 UdpHeader udpHeader;
+//                 pkt->PeekHeader(udpHeader);
+//                 src_port = udpHeader.GetSourcePort();
+//                 dst_port = udpHeader.GetDestinationPort();
+//             }
+//         }
+//         uint32_t hash = src_ip ^ (dst_ip << 1) ^ (proto << 2) ^ (src_port << 3) ^ (dst_port << 4);
+//         idx = hash % next_hops.size();
+//         if (idx != 0 && pkt) {
+//             // Mark the packet
+//             Ptr<Packet> nonConstPkt = const_cast<Packet*>(PeekPointer(pkt));
+//             DeflectionMarkTag tag;
+//             nonConstPkt->AddPacketTag(tag);
+//         }
+//     } // else idx remains 0 if marked
 
     
 //     return next_hops[idx];
 // }
+
+std::tuple<int32_t, int32_t, int32_t> ArbiterDeflection::TopologySatelliteNetworkDecide(
+        int32_t source_node_id,
+        int32_t target_node_id,
+        Ptr<const Packet> pkt,
+        Ipv4Header const &ipHeader,
+        bool is_request_for_source_ip_so_no_next_header
+) {
+    // Hash-based selection of next hop
+    const auto& next_hops = m_next_hop_list[target_node_id];
+    if (next_hops.empty()) {
+        // Return an invalid entry if no next hops are available
+        return std::make_tuple(-2, -2, -2);
+    }
+
+    uint32_t src_ip = ipHeader.GetSource().Get();
+    uint32_t dst_ip = ipHeader.GetDestination().Get();
+    uint8_t proto = ipHeader.GetProtocol();
+    uint8_t ttl = ipHeader.GetTtl();
+    uint16_t src_port = 0;
+    uint16_t dst_port = 0;
+
+
+    if (proto == 6) { // TCP
+        TcpHeader tcpHeader;
+        pkt->PeekHeader(tcpHeader);
+        src_port = tcpHeader.GetSourcePort();
+        dst_port = tcpHeader.GetDestinationPort();
+    } else if (proto == 17) { // UDP
+        UdpHeader udpHeader;
+        pkt->PeekHeader(udpHeader);
+        src_port = udpHeader.GetSourcePort();
+        dst_port = udpHeader.GetDestinationPort();
+    }
+
+
+    uint32_t hash = src_ip;
+    hash ^= (dst_ip << 7) | (dst_ip >> 25);
+    hash ^= (proto << 13);
+    hash ^= (src_port << 3) | (src_port >> 13);
+    hash ^= (dst_port << 11) | (dst_port >> 5);
+    hash ^= (ttl << 17) | (ttl >> 3);
+    // Mix with a large prime
+    hash *= 2654435761u;
+    hash ^= (hash >> 16);
+    uint32_t idx = hash % next_hops.size();
+
+    
+    return next_hops[idx];
+}
 
 // std::tuple<int32_t, int32_t, int32_t> ArbiterDeflection::TopologySatelliteNetworkDecide(
 //         int32_t source_node_id,

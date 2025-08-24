@@ -40,18 +40,25 @@
 
 /* Cache Settings */
 #define USING_CACHE true            // Is the cache being used
-#define CACHE_REFRESH_RATE 0        // How long until you need to clear the entire cache (0 for never)                      BEST: 0   (ms)
-#define ENTRY_EXPIRE_RATE 150       // How long in simulation time (ms) until a cache entry expires.                        BEST: 150 (ms)
+#define CACHE_REFRESH_RATE 0        // How long until you need to clear the entire cache (0 for never)                      
+                                    // BEST: 0   (ms)
+
+#define ENTRY_EXPIRE_RATE 150       // How long in simulation time (ms) until a cache entry expires.                        
+                                    // BEST: 150 (ms) 
+
 #define THRESHOLD_SIZE .4           // Threshold for how much the queue needs to change (%) to recalculate the value
 #define TTL_HOP_LIMIT 0             // How much lower does a ttl need to be to recalculate the value
 #define MAX_DEFLECTIONS 8           // How many deflections can occur per packet.
-#define DROP_DECAY .75              // If dropping in cache, multiply the threshold need by this value.                     (UNUSED)
-#define REPEATED_DEFLECTIONS true   // Should we allow deflections to send packets back to the interface it received from.
+#define DROP_DECAY .75              // If dropping in cache, multiply the threshold need by this value.                     
+                                    // BEST: UNUSED (We do not drop packets)
+#define REPEATED_DEFLECTIONS false   // Should we allow deflections to send packets back to the interface it received from.
 
 /* Weight Settings */
 #define USE_WEIGHTS true            // Pick where to deflect via from weighted distribution
 #define WEIGHT_DECAY_RATE .018      // How fast a node will go back to being uniform
+                                    // BEST: .018 ms (goes to uniform in ~1.5s)
 #define WEIGHT_LEARN_RATE 1.25      // On a sendback, how much do we penalize the weight for this interface(per packet)
+                                    // BEST: ??? (Yet to find satisfying topology to test on)
 
 
 
@@ -182,7 +189,7 @@ namespace ns3 {
         CacheKey key = std::make_tuple(src_ip, dst_ip, src_port, dst_port);
 
         //print cache info
-        if (false && VERBOSE && context.pkt) {
+        if (VERBOSE && context.pkt) {
             PrintCache();
         } 
 
@@ -775,3 +782,25 @@ namespace ns3 {
     }
 
 }
+
+/*
+**********************
+*   TASKS            *
+**********************
+*   BUILD GRAPH
+    *   MEASURE GS CONNECTIONS OVER TIME
+    *   MEASURE THROUGHPUT OVER TIME
+    *   CHECK CORRELATION
+*   GRAPH RATIO CDF
+    *   HASH VS CACHE?
+    *   DEGREE NONSENSE?
+    
+*   TEST TOP (IMPROVE)
+    *   PICK WORST TOP
+    *   TRY TO FIND WORST PAIR? -> PUT IN AB OR COMP
+
+*   IMPROVEMENT IDEAS:
+    *   FINE TOON PARAMS?
+        *   NEED STRESS TEST SINCE MOST VARS ARE RARE TO BE USED
+
+*/

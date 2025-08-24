@@ -95,11 +95,16 @@ def plot_cdf_aggregates(files):
 
 # === Example Usage ===
 filepaths = [
-    "flows/competing_kept/tcp_flows_100f_rcache50s.txt",
-    "flows/competing_kept/tcp_flows_100f_lcache50s.txt",
-    "flows/competing_removed/tcp_flows_100f_dcache50s.txt",
-    "flows/competing_removed/tcp_flows_100f_rcache50s.txt",
-    "flows/competing_removed/tcp_flows_100f_lcache50s.txt",
-    "flows/competing_removed/tcp_flows_100f_dcache50s.txt"
+    # "flows/competing_kept/tcp_flows_100f_rcache50s.txt",
+    # "flows/competing_kept/tcp_flows_100f_lcache50s.txt",
+    # "flows/competing_kept/tcp_flows_100f_fcache50s.txt",
+    # "flows/competing_kept/tcp_flows_100f_sf50s.txt",
+    # "flows/competing_kept/tcp_flows_2_100f_cache50s.txt",
+    #"runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows_50s.txt",
+    #"runs/run_general_tm_pairing_kuiper_isls_static/logs_ns3/tcp_flows_50s.txt",
+    "flows/random_50/tcp_flows_lmcache1_50s.txt",
+    "flows/random_50/tcp_flows_lscache1_50s.txt",
+    "flows/random_50/tcp_flows_msf_50s.txt",
+    "flows/random_50/tcp_flows_ssf_50s.txt",
 ]
 plot_cdf_aggregates(filepaths)

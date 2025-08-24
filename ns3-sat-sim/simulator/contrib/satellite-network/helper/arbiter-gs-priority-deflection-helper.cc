@@ -51,7 +51,9 @@ ArbiterGSPriorityDeflectionHelper::ArbiterGSPriorityDeflectionHelper (Ptr<BasicS
 
     std::cout << std::endl;
 }
-
+std::vector<ns3::Ptr<ns3::ArbiterGSPriorityDeflection>> ArbiterGSPriorityDeflectionHelper::GetArbiters() {
+    return m_arbiters;
+}
 // std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>>
 // ArbiterDeflectionHelper::InitialEmptyForwardingState() {
 //     std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>> initial_forwarding_state;

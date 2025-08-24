@@ -1,0 +1,266 @@
+/*
+ * Copyright (c) 2020 ETH Zurich
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: Simon               2020
+ */
+
+#include <map>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <ctime>
+#include <iostream>
+#include <fstream>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <chrono>
+#include <stdexcept>
+
+#include "ns3/basic-simulation.h"
+#include "ns3/tcp-flow-scheduler.h"
+#include "ns3/udp-burst-scheduler.h"
+#include "ns3/pingmesh-scheduler.h"
+#include "ns3/topology-satellite-network.h"
+#include "ns3/tcp-optimizer.h"
+#include "ns3/arbiter-single-forward-helper.h"
+#include "ns3/arbiter-deflection-helper.h"
+#include "ns3/arbiter-gs-priority-deflection-helper.h"
+#include "ns3/ipv4-arbiter-routing-helper.h"
+#include "ns3/gsl-if-bandwidth-helper.h"
+#include "ns3/packet-loss-counter.h"
+
+
+#include "ns3/flow-monitor-helper.h"
+#include "ns3/flow-monitor.h"
+
+
+#include "ns3/packet.h"
+#include "ns3/ipv4-header.h"
+#include "ns3/ipv6-header.h"
+#include "ns3/tcp-header.h"
+#include "ns3/udp-header.h"
+#include "ns3/point-to-point-net-device.h"
+#include "ns3/ethernet-header.h"
+
+
+#include "ns3/packet.h"
+
+// Network headers
+#include "ns3/ipv4-header.h"
+#include "ns3/ipv6-header.h"
+
+// Transport headers
+#include "ns3/tcp-header.h"
+#include "ns3/udp-header.h"
+
+// Link / MAC headers
+#include "ns3/ethernet-header.h"
+#include "ns3/wifi-mac-header.h"
+#include "ns3/lr-wpan-mac-header.h"
+#include "ns3/sll-header.h"
+#include "ns3/ppp-header.h"
+#include "ns3/radiotap-header.h"
+#include "ns3/aloha-noack-mac-header.h"
+#include "ns3/ampdu-subframe-header.h"
+#include "ns3/amsdu-subframe-header.h"
+
+// LTE / Cellular headers
+#include "ns3/lte-pdcp-header.h"
+#include "ns3/lte-rlc-header.h"
+#include "ns3/lte-rlc-am-header.h"
+#include "ns3/epc-gtpc-header.h"
+#include "ns3/epc-gtpu-header.h"
+#include "ns3/epc-x2-header.h"
+#include "ns3/lte-rrc-header.h"
+#include "ns3/lte-asn1-header.h"
+
+// Routing / control headers
+#include "ns3/rip-header.h"
+#include "ns3/ripng-header.h"
+#include "ns3/arp-header.h"
+#include "ns3/icmpv6-header.h"
+
+// Application / sim-specific headers
+#include "ns3/seq-ts-header.h"
+#include "ns3/seq-ts-size-header.h"
+#include "ns3/three-gpp-http-header.h"
+#include "ns3/epc-gtpu-header.h"
+
+
+
+
+
+
+using namespace ns3;
+// Add these includes at the top of your main_satnet.cc file
+#include "ns3/packet.h"
+#include "ns3/ipv4.h"
+#include "ns3/ipv4-l3-protocol.h"
+#include "ns3/tcp-l4-protocol.h"
+#include "ns3/udp-l4-protocol.h"
+#include "ns3/trace-source-accessor.h"
+#include <map>
+
+// Global variables to track statistics (you already have these)
+std::map<int, uint64_t> full;
+std::map<int, uint64_t> pay;
+
+bool HasPacketSink(Ptr<Node> node) {
+    for (uint32_t j = 0; j < node->GetNApplications(); ++j) {
+        if (DynamicCast<PacketSink>(node->GetApplication(j))) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Correct callback function for IP layer Rx trace source
+void PacketReceivedAtIpLayerWithContext(std::string context, Ptr<const Packet> packet, Ptr<Ipv4> ipv4, uint32_t interface) {
+    // Extract node ID from context (format: "/NodeList/X/...")
+    size_t nodeListPos = context.find("/NodeList/");
+    if (nodeListPos == std::string::npos) return;
+    
+    size_t nodeIdStart = nodeListPos + 10; // Length of "/NodeList/"
+    size_t nodeIdEnd = context.find("/", nodeIdStart);
+    if (nodeIdEnd == std::string::npos) return;
+    
+    int nodeId = std::stoi(context.substr(nodeIdStart, nodeIdEnd - nodeIdStart));
+    
+    Ipv4Header ipv4Header;
+    TcpHeader tcp;
+    if (!packet->PeekHeader(ipv4Header)) {
+        printf("ipv4: 1, IPV4 Header: 0 TCP Header: %d\n",packet->PeekHeader(tcp));
+        return;
+    } else if (!packet->PeekHeader(tcp)) {
+        printf("ipv4: 1, IPV4 Header: 1 TCP Header: 0\n");
+        return;
+    }
+    printf("ipv4: 1, IPV4 Header: 1 TCP Header\n");
+    //uint32_t packetSize = packet->GetSize();
+    uint32_t packetSize = ipv4Header.GetPayloadSize() - tcp.GetLength();
+    
+    // Update statistics
+    pay[nodeId] += packetSize;
+    full[nodeId] += packet->GetSize();
+    
+    std::cout << "Node " << nodeId << " received packet of size " << packetSize 
+              << " at time " << Simulator::Now().GetSeconds() << "s" << std::endl;
+}
+
+
+
+
+// Even simpler approach - just use the existing flow monitoring
+void SetupSimplePacketTracing(Ptr<TopologySatelliteNetwork> topology) {
+    // Get all nodes
+    NodeContainer allNodes = topology->GetNodes();
+    
+    std::cout << "Setting up packet tracing for " << allNodes.GetN() << " nodes" << std::endl;
+    
+    // Trace at IP level for all nodes
+    for (uint32_t i = 0; i < allNodes.GetN(); ++i) {
+        // Create the trace path for this specific node
+        if (!topology->IsGroundStationId(i)) {
+            continue;
+        }
+        auto node = topology->GetNodes().Get(i);
+        
+        std::ostringstream rxPath;
+        rxPath << "/NodeList/" << i << "/$ns3::Ipv4L3Protocol/Rx";
+        
+        // Connect the trace (Config::Connect returns void, not bool)
+        Config::Connect(rxPath.str(), MakeCallback(&PacketReceivedAtIpLayerWithContext));
+        std::cout << "Set up trace for node " << i << "PSINK" << HasPacketSink(node) << std::endl;
+
+    }
+}
+
+// Modified main function with the tracing setup
+int main(int argc, char *argv[]) {
+    // No buffering of printf
+    setbuf(stdout, nullptr);
+    
+    // Retrieve run directory
+    CommandLine cmd;
+    std::string run_dir = "";
+    cmd.Usage("Usage: ./waf --run=\"main_satnet --run_dir='<path/to/run/directory>'\"");
+    cmd.AddValue("run_dir",  "Run directory", run_dir);
+    cmd.Parse(argc, argv);
+    if (run_dir.compare("") == 0) {
+        printf("Usage: ./waf --run=\"main_satnet --run_dir='<path/to/run/directory>'\"");
+        return 0;
+    }
+    
+    // Load basic simulation environment
+    Ptr<BasicSimulation> basicSimulation = CreateObject<BasicSimulation>(run_dir);
+    
+    // Setting socket type
+    Config::SetDefault ("ns3::TcpL4Protocol::SocketType", StringValue ("ns3::" + basicSimulation->GetConfigParamOrFail("tcp_socket_type")));
+    
+    // Optimize TCP
+    TcpOptimizer::OptimizeBasic(basicSimulation);
+    
+    // Read topology, and install routing arbiters
+    Ptr<TopologySatelliteNetwork> topology = CreateObject<TopologySatelliteNetwork>(basicSimulation, Ipv4ArbiterRoutingHelper());
+    
+    ArbiterGSPriorityDeflectionHelper arbiterHelper(basicSimulation, topology->GetNodes());
+    GslIfBandwidthHelper gslIfBandwidthHelper(basicSimulation, topology->GetNodes());
+    
+    // Schedule flows
+    TcpFlowScheduler tcpFlowScheduler(basicSimulation, topology);
+    
+    // Schedule UDP bursts
+    UdpBurstScheduler udpBurstScheduler(basicSimulation, topology);
+    
+    // Schedule pings
+    PingmeshScheduler pingmeshScheduler(basicSimulation, topology);
+    
+    std::srand(std::time(nullptr));
+    
+    // SET UP PACKET RECEPTION TRACING HERE
+    SetupSimplePacketTracing(topology);
+    
+    // Run simulation
+    basicSimulation->Run();
+    
+    // Write flow results
+    tcpFlowScheduler.WriteResults();
+    
+    // Write UDP burst results
+    udpBurstScheduler.WriteResults();
+    
+    // Write pingmesh results
+    pingmeshScheduler.WriteResults();
+    
+    // Collect utilization statistics
+    topology->CollectUtilizationStatistics();
+    
+    // Finalize the simulation
+    basicSimulation->Finalize();
+    
+    printf("\n\nLOGGING RESULTS\n");
+    std::cout << "FULL\n";
+    for (auto it = full.begin(); it != full.end(); it++) {
+        std::cout << it->first << ": " << double(it->second) * 8 / 1000000 << "\n";
+    }
+    std::cout << "\nPAYLOAD\n";
+    for (auto it = pay.begin(); it != pay.end(); it++) {
+        std::cout << it->first << ": " << double(it->second) * 8 / 1000000 << "\n";
+    }
+    
+    return 0;
+}

@@ -130,6 +130,7 @@ if __name__ == "__main__":
     filepaths = [
         "flows/competing_kept/tcp_flows_100f_rcache50s.txt",
         "flows/competing_kept/tcp_flows_100f_lcache50s.txt",
+        "flows/competing_kept/tcp_flows_100f_fcache50s.txt",
     ]
     compare_all_nodes(filepaths)
 

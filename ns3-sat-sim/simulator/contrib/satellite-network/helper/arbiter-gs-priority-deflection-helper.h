@@ -33,6 +33,8 @@ namespace ns3 {
     {
     public:
         ArbiterGSPriorityDeflectionHelper(Ptr<BasicSimulation> basicSimulation, NodeContainer nodes);
+        //MADE BY MICHAEL TO HELP GET DATA
+        std::vector<ns3::Ptr<ns3::ArbiterGSPriorityDeflection>> GetArbiters();
     private:
         std::vector<std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>>> InitialEmptyForwardingState();
         void UpdateForwardingState(int64_t t);
