@@ -51,7 +51,8 @@
 #define MAX_DEFLECTIONS 8           // How many deflections can occur per packet.
 #define DROP_DECAY .75              // If dropping in cache, multiply the threshold need by this value.                     
                                     // BEST: UNUSED (We do not drop packets)
-#define REPEATED_DEFLECTIONS false   // Should we allow deflections to send packets back to the interface it received from.
+#define REPEATED_DEFLECTIONS false  // Should we allow deflections to send packets back to the interface it received from.
+                                    // BEST: Should never be true?
 
 /* Weight Settings */
 #define USE_WEIGHTS true            // Pick where to deflect via from weighted distribution
@@ -372,7 +373,7 @@ namespace ns3 {
             int32_t node_id = std::get<0>(hop);
             
             // if this node was not the last hop (in a deflection)
-            if (deflected_from_node_id != node_id) {
+            if (REPEATED_DEFLECTIONS || deflected_from_node_id != node_id) {
                 new_context.next_hop_options.push_back(hop);
                 preserved_indices.push_back(i);
                 if (USE_WEIGHTS && i > 0) {
@@ -437,8 +438,11 @@ namespace ns3 {
         if (m_weights.find(context.target_node_id) == m_weights.end()) { 
             // create uniform weights
             CreateWeights(context);
-
+            //create the decay timer
             m_weight_decay_timer[context.target_node_id] = Simulator::Now();
+            //create the dec timer
+            m_weight_bump_timer[context.target_node_id] = Simulator::Now();
+
         } else {
             // first we must ensure all weights reflect nodes in the hop list (and we haven no extra weights!)
             MaintainWeights(context);
@@ -520,6 +524,13 @@ namespace ns3 {
         if (!context.pkt->PeekPacketTag(tag)) {
             return; 
         } 
+        auto now = Simulator::Now();
+
+        // TODO: Add timer to stablize bumping the weights (T^ -> W^)
+        if (now < m_weight_bump_timer[context.target_node_id] + MilliSeconds(0)) { // 0: not used
+            m_weight_bump_timer[context.target_node_id] = now;
+            return;
+        }
         
         int32_t node_deflected_from_id = tag.GetLastNode();
         if (m_weights[context.target_node_id].find(node_deflected_from_id) != m_weights[context.target_node_id].end()) {

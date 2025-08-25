@@ -187,6 +187,9 @@ private:
 
     // each maps a target ground station to some timer
     std::unordered_map<int32_t, Time> m_weight_decay_timer; 
+
+    // each maps a target ground station to some timer
+    std::unordered_map<int32_t, Time> m_weight_bump_timer; 
     
     // ******************************
     // ====== Cache Management ======
