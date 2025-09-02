@@ -36,6 +36,7 @@
 
 /* General Deflection Settings */
 #define VERBOSE false               // Turn on logging statements
+#define GET_PATH_LENS false         // Logs the time and number of deflections before reaching to target N to m_paths_N.txt 
 #define FLAGS OVER_0                // When should we start/ramp up deflecting
 #define STATIC false                // Should the chance to deflect increase per flag or smoothly 
                                     // BEST: false (it is not worth considering this parameter)
@@ -58,7 +59,7 @@
                                     // BEST: false
 
 /* Weight Settings */
-#define USE_WEIGHTS false            // Pick where to deflect via from weighted distribution
+#define USE_WEIGHTS true            // Pick where to deflect via from weighted distribution
 #define WEIGHT_DECAY_RATE .018      // How fast a node will go back to being uniform
                                     // BEST: .018 ms (goes to uniform in ~1.5s)
 #define WEIGHT_LEARN_RATE 1.25      // On a sendback, how much do we penalize the weight for this interface(per packet)
@@ -138,7 +139,7 @@ namespace ns3 {
             } 
             else if (pkt && n_if > 0) { MarkPacket(pkt); } 
 
-            if (n_if == 0) {
+            if (n_if == 0 && GET_PATH_LENS) {
                 log_paths(context);
             }
 
@@ -151,7 +152,7 @@ namespace ns3 {
 
     void ArbiterGSPriorityDeflection::log_paths(PacketRoutingContext ctx) {
         Time t = Simulator::Now();
-        std::cout << std::to_string(ctx.target_node_id) << " TIME: " <<  t.GetSeconds() << std::endl;
+        //std::cout << std::to_string(ctx.target_node_id) << " TIME: " <<  t.GetSeconds() << std::endl;
         Ptr<Packet> nonConstPkt = const_cast<Packet*>(PeekPointer(ctx.pkt));
 
         // Handle PathDeflectionTag

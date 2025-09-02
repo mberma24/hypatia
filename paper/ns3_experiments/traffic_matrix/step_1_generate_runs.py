@@ -33,7 +33,7 @@ local_shell.remove_force_recursive("data")
 
 # for traffic_mode in ["specific", "general"]:
 for traffic_mode in ["general"]:
-    for movement in ["static", "moving"]:
+    for movement in ["moving"]:#"static", "moving"]:
 
         # Prepare run directory
         run_dir = "runs/run_" + traffic_mode + "_tm_pairing_kuiper_isls_" + movement
@@ -202,8 +202,7 @@ for traffic_mode in ["general"]:
                 dst = available.pop()
                 list_from_to.append((src, dst))
                 count += 1
-                
-            list_from_to = list_from_to * 10
+            list_from_to = list_from_to * 100
 
         else:
             raise ValueError("Unknown traffic mode: " + traffic_mode)
