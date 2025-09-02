@@ -26,16 +26,19 @@
 #include <random>
 #include <algorithm>
 #include <numeric>
-
+#include <fstream>
+#include <limits.h>
+#include <string>
 
 // ************************************
 // ====== Customizable Variables ======
 // ************************************
 
 /* General Deflection Settings */
-#define VERBOSE true                // Turn on logging statements
+#define VERBOSE false               // Turn on logging statements
 #define FLAGS OVER_0                // When should we start/ramp up deflecting
-#define STATIC false                // Should the chance to deflect increase per flag or smoothly
+#define STATIC false                // Should the chance to deflect increase per flag or smoothly 
+                                    // BEST: false (it is not worth considering this parameter)
 #define DEFLECTION_BOOST 0          // Make it easier to deflect
 
 /* Cache Settings */
@@ -48,14 +51,14 @@
 
 #define THRESHOLD_SIZE .4           // Threshold for how much the queue needs to change (%) to recalculate the value
 #define TTL_HOP_LIMIT 0             // How much lower does a ttl need to be to recalculate the value
-#define MAX_DEFLECTIONS 8           // How many deflections can occur per packet.
+#define MAX_DEFLECTIONS 7           // How many deflections can occur per packet.
 #define DROP_DECAY .75              // If dropping in cache, multiply the threshold need by this value.                     
                                     // BEST: UNUSED (We do not drop packets)
 #define REPEATED_DEFLECTIONS false  // Should we allow deflections to send packets back to the interface it received from.
-                                    // BEST: Should never be true?
+                                    // BEST: false
 
 /* Weight Settings */
-#define USE_WEIGHTS true            // Pick where to deflect via from weighted distribution
+#define USE_WEIGHTS false            // Pick where to deflect via from weighted distribution
 #define WEIGHT_DECAY_RATE .018      // How fast a node will go back to being uniform
                                     // BEST: .018 ms (goes to uniform in ~1.5s)
 #define WEIGHT_LEARN_RATE 1.25      // On a sendback, how much do we penalize the weight for this interface(per packet)
@@ -135,11 +138,62 @@ namespace ns3 {
             } 
             else if (pkt && n_if > 0) { MarkPacket(pkt); } 
 
+            if (n_if == 0) {
+                log_paths(context);
+            }
+
             return next_hops[n_if];
         } 
         
        
         return next_hops[0];
+    }
+
+    void ArbiterGSPriorityDeflection::log_paths(PacketRoutingContext ctx) {
+        Time t = Simulator::Now();
+        std::cout << std::to_string(ctx.target_node_id) << " TIME: " <<  t.GetSeconds() << std::endl;
+        Ptr<Packet> nonConstPkt = const_cast<Packet*>(PeekPointer(ctx.pkt));
+
+        // Handle PathDeflectionTag
+        PathDeflectionTag path_tag;
+        size_t len = 0;
+        if (nonConstPkt->PeekPacketTag(path_tag)) {
+            len = path_tag.GetNumDeflections();
+        }
+            
+
+        if (t > m_path_time) {
+            double avg = 0.0;
+            if (!m_path_lengths.empty()) {
+                avg = static_cast<double>(
+                        std::accumulate(m_path_lengths.begin(),
+                                        m_path_lengths.end(),
+                                        0ULL))
+                    / m_path_lengths.size();
+            }
+
+
+            std::string baseDir = "/home/sat/hypatia/paper/ns3_experiments/two_compete/"
+                                "runs/run_two_kuiper_isls_moving/logs_ns3/";
+
+
+            std::string filename = baseDir + "m_paths_" + std::to_string(ctx.target_node_id) + ".txt";
+
+            // fill out file with times and avrgs
+            std::ofstream outfile(filename, std::ios::app);
+            if (outfile.is_open()) {
+                outfile << t.GetNanoSeconds() << " " << avg << "\n";
+                outfile.close();
+            }
+
+            // reset for next interval
+            m_path_time = t;
+            m_path_lengths.clear();
+        
+        } 
+        m_path_lengths.push_back(len);
+            
+        
     }
 
     void ArbiterGSPriorityDeflection::SetDeflectionState(
@@ -438,9 +492,9 @@ namespace ns3 {
         if (m_weights.find(context.target_node_id) == m_weights.end()) { 
             // create uniform weights
             CreateWeights(context);
-            //create the decay timer
+            //create a decay timer
             m_weight_decay_timer[context.target_node_id] = Simulator::Now();
-            //create the dec timer
+            //create a timer to limit how often we bump the weights
             m_weight_bump_timer[context.target_node_id] = Simulator::Now();
 
         } else {

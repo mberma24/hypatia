@@ -190,6 +190,12 @@ private:
 
     // each maps a target ground station to some timer
     std::unordered_map<int32_t, Time> m_weight_bump_timer; 
+    // each maps a target ground station to some timer
+    Time m_path_time; 
+    std::vector<int32_t> m_path_lengths; 
+
+    void log_paths(PacketRoutingContext ctx);
+
     
     // ******************************
     // ====== Cache Management ======

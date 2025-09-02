@@ -30,7 +30,7 @@ public:
   void SetPath(const std::vector<int32_t>& path);
   std::vector<int32_t> GetPath() const;
   int32_t GetLastNode() const;
-  uint8_t GetNumDeflections() const;
+  std::size_t GetNumDeflections() const;
 
 private:
   std::vector<int32_t> m_path;

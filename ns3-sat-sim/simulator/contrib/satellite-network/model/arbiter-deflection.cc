@@ -18,6 +18,10 @@
  */
 
 #include "arbiter-deflection.h"
+#include "path-deflection-tag.h"
+#include <algorithm>
+#include <numeric>
+#include <string>
 
 namespace ns3 {
 
@@ -126,6 +130,12 @@ std::tuple<int32_t, int32_t, int32_t> ArbiterDeflection::TopologySatelliteNetwor
         // Return an invalid entry if no next hops are available
         return std::make_tuple(-2, -2, -2);
     }
+    printf("Here1?\n");
+    if (IsFinalHopToGS(std::get<0>(next_hops[0]), std::get<1>(next_hops[0]))) {
+        printf("Here2?\n");
+        MarkPacket(pkt);
+    }
+    printf("Here3?\n");
 
     uint32_t src_ip = ipHeader.GetSource().Get();
     uint32_t dst_ip = ipHeader.GetDestination().Get();
@@ -159,9 +169,69 @@ std::tuple<int32_t, int32_t, int32_t> ArbiterDeflection::TopologySatelliteNetwor
     hash ^= (hash >> 16);
     uint32_t idx = hash % next_hops.size();
 
-    
+    PacketRoutingContext context {
+        pkt,
+        ipHeader,
+        is_request_for_source_ip_so_no_next_header,
+        next_hops,
+        target_node_id,
+    };
+
+    if (idx == 0 && pkt) {
+        log_paths(context);
+    }
     return next_hops[idx];
 }
+
+void ArbiterDeflection::log_paths(PacketRoutingContext  ctx) {
+    Time t = Simulator::Now();
+    Ptr<Packet> nonConstPkt = const_cast<Packet*>(PeekPointer(ctx.pkt));
+    // Handle PathDeflectionTag
+    PathDeflectionTag path_tag;
+    size_t len = 0;
+    if (nonConstPkt->PeekPacketTag(path_tag)) {
+        len = path_tag.GetNumDeflections();
+    }
+
+        
+
+    if (t > m_path_time) {
+        double avg = 0.0;
+        if (!m_path_lengths.empty()) {
+            avg = static_cast<double>(
+                    std::accumulate(m_path_lengths.begin(),
+                                    m_path_lengths.end(),
+                                    0ULL))
+                / m_path_lengths.size();
+        }
+
+        // Directory you want
+        std::string baseDir = "/home/sat/hypatia/paper/ns3_experiments/two_compete/"
+                            "runs/run_two_kuiper_isls_moving/logs_ns3/";
+
+        // Build filename with target_node_id
+        std::string filename = baseDir + "m_paths_" + std::to_string(ctx.target_node_id) + ".txt";
+   
+        // Open file in append mode
+        std::ofstream outfile(filename, std::ios::app);
+        if (outfile.is_open()) {
+            outfile << t.GetNanoSeconds() << " " << avg << "\n";
+            outfile.close();
+        }
+
+        std::cout << "WROTE" << std::endl;
+        // Reset for next interval
+        m_path_time = t;
+        m_path_lengths.clear();
+
+    } 
+
+    m_path_lengths.push_back(len);
+
+            
+        
+
+    }
 
 // std::tuple<int32_t, int32_t, int32_t> ArbiterDeflection::TopologySatelliteNetworkDecide(
 //         int32_t source_node_id,
@@ -236,5 +306,55 @@ std::string ArbiterDeflection::StringReprOfForwardingState() {
     }
     return res.str();
 }
+
+bool ArbiterDeflection::IsFinalHopToGS(int32_t next_node_id, int32_t my_if_id) {
+        //we simply check if this is a GSL, and if so we need to ensure THIS node is a satelight and the next node is NOT
+        bool is_gsl 
+                = m_nodes.Get(m_node_id)
+                ->GetObject<Ipv4>()
+                ->GetNetDevice(my_if_id)
+                ->GetObject<GSLNetDevice>() != 0;
+        
+        bool this_is_gs = IsGroundStation(m_node_id);
+        bool next_is_gs = IsGroundStation(next_node_id);
+        return is_gsl && next_is_gs && !this_is_gs;
+    }
+
+    bool ArbiterDeflection::IsGroundStation(int32_t node_id) {
+        Ptr<Node> node = m_nodes.Get(node_id);
+        Ptr<Ipv4> ipv4 = node->GetObject<Ipv4>();
+        for (uint32_t i = 0; i < ipv4->GetNInterfaces(); ++i) { // for all interfaces/devices
+            if (ipv4->GetNetDevice(i)->GetObject<PointToPointLaserNetDevice>() != nullptr) { // there is no isl
+                return false;
+            }
+        }
+        return true;
+    }
+
+    
+
+    void ArbiterDeflection::MarkPacket(Ptr<const Packet> pkt) {
+        Ptr<Packet> nonConstPkt = const_cast<Packet*>(PeekPointer(pkt));
+
+        // // Handle LastDeflectionTag
+        // LastDeflectionTag tag(m_node_id);
+        // if (nonConstPkt->PeekPacketTag(tag)) {
+        //     tag.SetLastNode(m_node_id);
+        //     nonConstPkt->ReplacePacketTag(tag);
+        // } else {
+        //     nonConstPkt->AddPacketTag(LastDeflectionTag(m_node_id));
+        // }
+
+        // Handle PathDeflectionTag
+        PathDeflectionTag path_tag;
+        if (nonConstPkt->PeekPacketTag(path_tag)) {
+            path_tag.SetLastNode(m_node_id);
+            nonConstPkt->ReplacePacketTag(path_tag);
+        } else {
+            PathDeflectionTag new_tag;
+            new_tag.SetLastNode(m_node_id);
+            nonConstPkt->AddPacketTag(new_tag);
+        }
+    }
 
 }

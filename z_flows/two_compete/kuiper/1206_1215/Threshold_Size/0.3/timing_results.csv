@@ -1,0 +1,15 @@
+Configure run and logs directory,128334
+Configure simulator,586210
+Setup TCP parameters,351794
+Create initial single forwarding state,15923231579
+Setup routing arbiter on each node,25699745863
+Create initial single forwarding state,1238376063
+Set first GSL interface bandwidth,185529969
+Read flow schedule,15418216
+Remove previous flow log files,72833
+Setup TCP flow sinks,18014141
+Setup traffic TCP flow starter,10040532
+Whatever is between previous timestamp and the simulation run,425043
+Run simulation,85528193170
+Write TCP flow log files,14319527
+Destroy simulator,298453323
