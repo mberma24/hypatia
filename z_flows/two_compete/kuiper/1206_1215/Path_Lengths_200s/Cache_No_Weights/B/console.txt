@@ -1,0 +1,197 @@
+Waf: Entering directory `/home/mberma24/hypatia/ns3-sat-sim/simulator/build/debug_all'
+Waf: Leaving directory `/home/mberma24/hypatia/ns3-sat-sim/simulator/build/debug_all'
+Build commands will be stored in build/debug_all/compile_commands.json
+'build' finished successfully (0.441s)
+BASIC SIMULATION START
+  > Date... Tuesday September  9, 2025
+  > Time... 13:42:08
+
+CONFIGURE RUN DIRECTORY
+  > Run directory: ../../paper/ns3_experiments/two_compete/runs/run_two_kuiper_isls_moving
+  > Logs directory: ../../paper/ns3_experiments/two_compete/runs/run_two_kuiper_isls_moving/logs_ns3
+
+CONFIGURATION
+-----
+KEY                                       VALUE
+dynamic_state_update_interval_ns          100000000
+enable_isl_utilization_tracking           true
+enable_tcp_flow_scheduler                 true
+gsl_data_rate_megabit_per_s               40.0
+gsl_max_queue_size_pkts                   50
+isl_data_rate_megabit_per_s               100.0
+isl_max_queue_size_pkts                   50
+isl_utilization_tracking_interval_ns      100000000
+satellite_network_dir                     ../../../../satellite_networks_state/gen_data_lasthop_deflection/kuiper_630_isls_plus_grid_ground_stations_top_100_algorithm_free_gs_one_sat_uplink_downlink_only_over_isls_lasthop_splitting
+satellite_network_force_static            false
+satellite_network_routes_dir              ../../../../satellite_networks_state/gen_data_lasthop_deflection/kuiper_630_isls_plus_grid_ground_stations_top_100_algorithm_free_gs_one_sat_uplink_downlink_only_over_isls_lasthop_splitting/dynamic_state_100ms_for_200s
+simulation_end_time_ns                    200000000000
+simulation_seed                           123456789
+tcp_flow_schedule_filename                schedule_kuiper_630.csv
+tcp_socket_type                           TcpNewReno
+
+CONFIGURE SIMULATION
+  > Distributed is not enabled
+  > System id........ 0
+  > No. of systems... 1
+  > Seed............. 123456789
+  > Duration......... 200.00 s (200000000000 ns)
+
+TCP OPTIMIZATION BASIC
+  > Clock granularity.......... 1 ns
+  > Initial CWND............... 10 packets
+  > Send buffer size........... 33.554 MB
+  > Receive buffer size........ 33.554 MB
+  > Segment size............... 1380 byte
+  > Timestamp option........... enabled
+  > SACK option................ enabled
+  > Window scaling option...... enabled
+  > Pacing..................... disabled
+
+SATELLITE NETWORK
+  > Number of satellites........ 1156
+  > Number of ground stations... 100
+  > Number of nodes............. 1256
+  > Installed Internet stacks
+  > Reading and creating ISLs
+    >> ISL data rate........ 100 Mbit/s
+    >> ISL max queue size... 50 packets
+    >> Created 2312 ISL(s)
+  > Creating GSLs
+    >> GSL data rate........ 40 Mbit/s
+    >> GSL max queue size... 50 packets
+    >> Read all GSL interfaces information for the 1256 nodes
+    >> Number of GSL interfaces to create... 2512
+    >> Finished install GSL interfaces (interfaces, network devices, one shared channel)
+    >> Finished installing traffic control layer qdisc which will be removed later
+    >> Assigning IP addresses...
+       (with many interfaces, this can take long due to an inefficient IP assignment conflict checker)
+       Progress (as there are more entries, it becomes slower):
+       - 10.03% (t = 0.15 s, update took 0.15 s)
+       - 20.06% (t = 0.31 s, update took 0.16 s)
+       - 30.10% (t = 0.48 s, update took 0.17 s)
+       - 40.13% (t = 0.66 s, update took 0.18 s)
+       - 50.16% (t = 0.86 s, update took 0.20 s)
+       - 60.19% (t = 1.06 s, update took 0.21 s)
+       - 70.22% (t = 1.28 s, update took 0.22 s)
+       - 80.25% (t = 1.51 s, update took 0.23 s)
+       - 90.29% (t = 1.76 s, update took 0.24 s)
+       - 100.00% (t = 2.00 s, update took 0.25 s)
+    >> Finished assigning IPs
+    >> Removing traffic control layers (qdiscs)...
+    >> Finished removing GSL queueing disciplines
+    >> GSL interfaces are setup
+  > Populating ARP caches
+
+SETUP LAST HOP DEFLECTION ROUTING
+  > Create initial single forwarding state
+  > Setting the routing arbiter on each node
+VERBOSE: 0
+GET_PATH_LENS: 1
+FLAGS: 1
+STATIC: 0
+DEFLECTION BOOST: 0
+CACHE USAGE: 1
+CACHE REFRESH RATE: 0
+ENTRY EXPERIATION RATE: 150
+THRESHOLD: 0.4
+TTL SENSITIVITY: 0
+MAX DEFLECTIONS: 7
+DROP DECAY: 0.75
+REPEATED DEFLECITONS: 0
+WEIGHT USAGE: 0
+WEIGHT DECAY RATE: 0.018
+WEIGHT LEARNING RATE: 1.25
+  > Forward state update interval: 100000000ns
+  > Perform first forwarding state load for t=0
+
+SETUP GSL IF BANDWIDTH HELPER
+  > GSL interface bandwidth update interval: 100000000ns
+  > Perform first GSL interface bandwidth setting for t=0
+
+TCP FLOW SCHEDULER
+  > TCP flow scheduler is enabled
+  > Read schedule (total flow start events: 100)
+  > Removed previous flow log files if present
+  > Setting up TCP flow sinks
+  > Setting up traffic TCP flow starter
+
+UDP BURST SCHEDULER
+  > Not enabled explicitly, so disabled
+
+PINGMESH SCHEDULER
+  > Not enabled explicitly, so disabled
+
+SIMULATION
+Running the simulation for 200.00 simulation seconds...
+ 8.98% - Simulation Time = 17.97 s ::: Wallclock Time = 10.13 s
+Estimated wallclock time remaining: 1 minutes 42 seconds
+14.03% - Simulation Time = 28.06 s ::: Wallclock Time = 21.46 s
+Estimated wallclock time remaining: 2 minutes 11 seconds
+17.65% - Simulation Time = 35.30 s ::: Wallclock Time = 33.10 s
+Estimated wallclock time remaining: 2 minutes 34 seconds
+21.70% - Simulation Time = 43.39 s ::: Wallclock Time = 46.19 s
+Estimated wallclock time remaining: 2 minutes 46 seconds
+26.27% - Simulation Time = 52.53 s ::: Wallclock Time = 57.84 s
+Estimated wallclock time remaining: 2 minutes 42 seconds
+37.24% - Simulation Time = 74.49 s ::: Wallclock Time = 80.69 s
+Estimated wallclock time remaining: 2 minutes 15 seconds
+44.49% - Simulation Time = 88.99 s ::: Wallclock Time = 102.28 s
+Estimated wallclock time remaining: 2 minutes 7 seconds
+49.54% - Simulation Time = 99.08 s ::: Wallclock Time = 126.04 s
+Estimated wallclock time remaining: 2 minutes 8 seconds
+54.13% - Simulation Time = 108.26 s ::: Wallclock Time = 148.43 s
+58.42% - Simulation Time = 116.84 s ::: Wallclock Time = 169.49 s
+63.81% - Simulation Time = 127.63 s ::: Wallclock Time = 195.72 s
+Estimated wallclock time remaining: 1 minutes 50 seconds
+68.94% - Simulation Time = 137.89 s ::: Wallclock Time = 220.80 s
+73.87% - Simulation Time = 147.74 s ::: Wallclock Time = 244.97 s
+78.64% - Simulation Time = 157.29 s ::: Wallclock Time = 268.30 s
+86.92% - Simulation Time = 173.85 s ::: Wallclock Time = 289.52 s
+95.42% - Simulation Time = 190.84 s ::: Wallclock Time = 310.20 s
+Estimated wallclock time remaining: 14 seconds
+Finished simulation.
+Simulation of 200.0 seconds took in wallclock time 321.3 seconds.
+
+STORE TCP FLOW RESULTS
+  > Opening TCP flow log files:
+    >> Opened: ../../paper/ns3_experiments/two_compete/runs/run_two_kuiper_isls_moving/logs_ns3/tcp_flows.csv
+    >> Opened: ../../paper/ns3_experiments/two_compete/runs/run_two_kuiper_isls_moving/logs_ns3/tcp_flows.txt
+  > Writing tcp_flows.txt header
+  > Writing log files line-by-line
+  > Total TCP flow log entries to write... 100
+  > Closing TCP flow log files:
+    >> Closed: ../../paper/ns3_experiments/two_compete/runs/run_two_kuiper_isls_moving/logs_ns3/tcp_flows.csv
+    >> Closed: ../../paper/ns3_experiments/two_compete/runs/run_two_kuiper_isls_moving/logs_ns3/tcp_flows.txt
+  > TCP flow log files have been written
+
+STORE UDP BURST RESULTS
+  > Not enabled, so no UDP burst results are written
+
+STORE PINGMESH RESULTS
+  > Not enabled, so no pingmesh results are written
+
+CLEAN-UP
+  > Simulator is destroyed
+
+TIMING RESULTS
+------
+[    0.0 -     0.0] (0.0 s) :: Configure run and logs directory
+[    0.0 -     0.0] (0.0 s) :: Configure simulator
+[    0.0 -     0.0] (0.0 s) :: Setup TCP parameters
+[    0.0 -     8.7] (8.7 s) :: Create initial single forwarding state
+[    8.7 -    29.6] (20.9 s) :: Setup routing arbiter on each node
+[   29.6 -    30.8] (1.2 s) :: Create initial single forwarding state
+[   30.8 -    31.0] (0.2 s) :: Set first GSL interface bandwidth
+[   31.0 -    31.0] (0.0 s) :: Read flow schedule
+[   31.0 -    31.0] (0.0 s) :: Remove previous flow log files
+[   31.0 -    31.0] (0.0 s) :: Setup TCP flow sinks
+[   31.0 -    31.0] (0.0 s) :: Setup traffic TCP flow starter
+[   31.0 -    31.0] (0.0 s) :: Whatever is between previous timestamp and the simulation run
+[   31.0 -   352.3] (321.3 s) :: Run simulation
+[  352.3 -   352.3] (0.0 s) :: Write TCP flow log files
+[  352.3 -   353.5] (1.2 s) :: Destroy simulator
+
+BASIC SIMULATION END
+  > Date... Tuesday September  9, 2025
+  > Time... 13:48:02
+

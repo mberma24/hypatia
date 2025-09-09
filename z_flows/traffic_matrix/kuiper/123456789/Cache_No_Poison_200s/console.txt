@@ -1,0 +1,1485 @@
+Waf: Entering directory `/home/mberma24/hypatia/ns3-sat-sim/simulator/build/debug_all'
+Waf: Leaving directory `/home/mberma24/hypatia/ns3-sat-sim/simulator/build/debug_all'
+Build commands will be stored in build/debug_all/compile_commands.json
+'build' finished successfully (0.386s)
+BASIC SIMULATION START
+  > Date... Tuesday September  2, 2025
+  > Time... 22:42:15
+
+CONFIGURE RUN DIRECTORY
+  > Run directory: ../../paper/ns3_experiments/traffic_matrix/runs/run_general_tm_pairing_kuiper_isls_moving
+  > Logs directory: ../../paper/ns3_experiments/traffic_matrix/runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3
+
+CONFIGURATION
+-----
+KEY                                       VALUE
+dynamic_state_update_interval_ns          100000000
+enable_isl_utilization_tracking           true
+enable_tcp_flow_scheduler                 true
+gsl_data_rate_megabit_per_s               40.0
+gsl_max_queue_size_pkts                   50
+isl_data_rate_megabit_per_s               100.0
+isl_max_queue_size_pkts                   50
+isl_utilization_tracking_interval_ns      100000000
+satellite_network_dir                     ../../../../satellite_networks_state/gen_data_lasthop_deflection/kuiper_630_isls_plus_grid_ground_stations_top_100_algorithm_free_gs_one_sat_uplink_downlink_only_over_isls_lasthop_splitting
+satellite_network_force_static            false
+satellite_network_routes_dir              ../../../../satellite_networks_state/gen_data_lasthop_deflection/kuiper_630_isls_plus_grid_ground_stations_top_100_algorithm_free_gs_one_sat_uplink_downlink_only_over_isls_lasthop_splitting/dynamic_state_100ms_for_200s
+simulation_end_time_ns                    200000000000
+simulation_seed                           123456789
+tcp_flow_schedule_filename                schedule_kuiper_630.csv
+tcp_socket_type                           TcpNewReno
+
+CONFIGURE SIMULATION
+  > Distributed is not enabled
+  > System id........ 0
+  > No. of systems... 1
+  > Seed............. 123456789
+  > Duration......... 200.00 s (200000000000 ns)
+
+TCP OPTIMIZATION BASIC
+  > Clock granularity.......... 1 ns
+  > Initial CWND............... 10 packets
+  > Send buffer size........... 33.554 MB
+  > Receive buffer size........ 33.554 MB
+  > Segment size............... 1380 byte
+  > Timestamp option........... enabled
+  > SACK option................ enabled
+  > Window scaling option...... enabled
+  > Pacing..................... disabled
+
+SATELLITE NETWORK
+  > Number of satellites........ 1156
+  > Number of ground stations... 100
+  > Number of nodes............. 1256
+  > Installed Internet stacks
+  > Reading and creating ISLs
+    >> ISL data rate........ 100 Mbit/s
+    >> ISL max queue size... 50 packets
+    >> Created 2312 ISL(s)
+  > Creating GSLs
+    >> GSL data rate........ 40 Mbit/s
+    >> GSL max queue size... 50 packets
+    >> Read all GSL interfaces information for the 1256 nodes
+    >> Number of GSL interfaces to create... 2512
+    >> Finished install GSL interfaces (interfaces, network devices, one shared channel)
+    >> Finished installing traffic control layer qdisc which will be removed later
+    >> Assigning IP addresses...
+       (with many interfaces, this can take long due to an inefficient IP assignment conflict checker)
+       Progress (as there are more entries, it becomes slower):
+       - 10.03% (t = 0.15 s, update took 0.15 s)
+       - 20.06% (t = 0.31 s, update took 0.16 s)
+       - 30.10% (t = 0.48 s, update took 0.17 s)
+       - 40.13% (t = 0.66 s, update took 0.18 s)
+       - 50.16% (t = 0.85 s, update took 0.20 s)
+       - 60.19% (t = 1.06 s, update took 0.21 s)
+       - 70.22% (t = 1.28 s, update took 0.22 s)
+       - 80.25% (t = 1.51 s, update took 0.23 s)
+       - 90.29% (t = 1.75 s, update took 0.24 s)
+       - 100.00% (t = 2.00 s, update took 0.25 s)
+    >> Finished assigning IPs
+    >> Removing traffic control layers (qdiscs)...
+    >> Finished removing GSL queueing disciplines
+    >> GSL interfaces are setup
+  > Populating ARP caches
+
+SETUP LAST HOP DEFLECTION ROUTING
+  > Create initial single forwarding state
+  > Setting the routing arbiter on each node
+  > Forward state update interval: 100000000ns
+  > Perform first forwarding state load for t=0
+
+SETUP GSL IF BANDWIDTH HELPER
+  > GSL interface bandwidth update interval: 100000000ns
+  > Perform first GSL interface bandwidth setting for t=0
+
+TCP FLOW SCHEDULER
+  > TCP flow scheduler is enabled
+  > Read schedule (total flow start events: 5000)
+  > Removed previous flow log files if present
+  > Setting up TCP flow sinks
+  > Setting up traffic TCP flow starter
+
+UDP BURST SCHEDULER
+  > Not enabled explicitly, so disabled
+
+PINGMESH SCHEDULER
+  > Not enabled explicitly, so disabled
+
+SIMULATION
+Running the simulation for 200.00 simulation seconds...
+ 0.07% - Simulation Time = 0.15 s ::: Wallclock Time = 11.46 s
+Estimated wallclock time remaining: 4 hours 16 minutes
+ 0.17% - Simulation Time = 0.35 s ::: Wallclock Time = 23.24 s
+Estimated wallclock time remaining: 3 hours 43 minutes
+ 0.25% - Simulation Time = 0.49 s ::: Wallclock Time = 33.90 s
+Estimated wallclock time remaining: 3 hours 48 minutes
+ 0.32% - Simulation Time = 0.64 s ::: Wallclock Time = 44.90 s
+Estimated wallclock time remaining: 3 hours 53 minutes
+ 0.39% - Simulation Time = 0.78 s ::: Wallclock Time = 55.41 s
+Estimated wallclock time remaining: 3 hours 56 minutes
+ 0.53% - Simulation Time = 1.06 s ::: Wallclock Time = 76.76 s
+Estimated wallclock time remaining: 4 hours 0 minutes
+ 0.66% - Simulation Time = 1.33 s ::: Wallclock Time = 101.15 s
+Estimated wallclock time remaining: 4 hours 12 minutes
+ 0.79% - Simulation Time = 1.59 s ::: Wallclock Time = 125.25 s
+Estimated wallclock time remaining: 4 hours 21 minutes
+ 0.92% - Simulation Time = 1.84 s ::: Wallclock Time = 149.08 s
+ 1.04% - Simulation Time = 2.08 s ::: Wallclock Time = 173.11 s
+ 1.16% - Simulation Time = 2.32 s ::: Wallclock Time = 197.27 s
+Estimated wallclock time remaining: 4 hours 40 minutes
+ 1.28% - Simulation Time = 2.55 s ::: Wallclock Time = 221.72 s
+ 1.39% - Simulation Time = 2.78 s ::: Wallclock Time = 246.06 s
+ 1.50% - Simulation Time = 3.01 s ::: Wallclock Time = 270.59 s
+ 1.59% - Simulation Time = 3.18 s ::: Wallclock Time = 296.44 s
+ 1.68% - Simulation Time = 3.35 s ::: Wallclock Time = 318.59 s
+Estimated wallclock time remaining: 5 hours 11 minutes
+ 1.76% - Simulation Time = 3.52 s ::: Wallclock Time = 339.11 s
+ 1.86% - Simulation Time = 3.72 s ::: Wallclock Time = 363.88 s
+ 1.96% - Simulation Time = 3.93 s ::: Wallclock Time = 387.96 s
+ 2.06% - Simulation Time = 4.13 s ::: Wallclock Time = 411.84 s
+ 2.36% - Simulation Time = 4.73 s ::: Wallclock Time = 482.87 s
+Estimated wallclock time remaining: 5 hours 32 minutes
+ 2.65% - Simulation Time = 5.31 s ::: Wallclock Time = 551.00 s
+ 2.94% - Simulation Time = 5.88 s ::: Wallclock Time = 619.72 s
+ 3.22% - Simulation Time = 6.45 s ::: Wallclock Time = 689.43 s
+ 3.50% - Simulation Time = 7.01 s ::: Wallclock Time = 757.46 s
+ 3.78% - Simulation Time = 7.56 s ::: Wallclock Time = 823.77 s
+Estimated wallclock time remaining: 5 hours 49 minutes
+ 4.06% - Simulation Time = 8.11 s ::: Wallclock Time = 890.22 s
+ 4.33% - Simulation Time = 8.65 s ::: Wallclock Time = 958.48 s
+ 4.60% - Simulation Time = 9.20 s ::: Wallclock Time = 1029.74 s
+ 4.86% - Simulation Time = 9.73 s ::: Wallclock Time = 1098.22 s
+ 5.13% - Simulation Time = 10.26 s ::: Wallclock Time = 1164.38 s
+Estimated wallclock time remaining: 5 hours 58 minutes
+ 5.39% - Simulation Time = 10.79 s ::: Wallclock Time = 1229.81 s
+ 5.66% - Simulation Time = 11.31 s ::: Wallclock Time = 1294.62 s
+ 5.92% - Simulation Time = 11.84 s ::: Wallclock Time = 1359.03 s
+ 6.18% - Simulation Time = 12.36 s ::: Wallclock Time = 1423.66 s
+ 6.44% - Simulation Time = 12.88 s ::: Wallclock Time = 1488.92 s
+Estimated wallclock time remaining: 6 hours 0 minutes
+ 6.70% - Simulation Time = 13.40 s ::: Wallclock Time = 1552.89 s
+ 6.96% - Simulation Time = 13.91 s ::: Wallclock Time = 1616.51 s
+ 7.21% - Simulation Time = 14.43 s ::: Wallclock Time = 1679.69 s
+ 7.47% - Simulation Time = 14.94 s ::: Wallclock Time = 1742.93 s
+ 7.73% - Simulation Time = 15.46 s ::: Wallclock Time = 1807.06 s
+Estimated wallclock time remaining: 5 hours 59 minutes
+ 7.99% - Simulation Time = 15.97 s ::: Wallclock Time = 1871.83 s
+ 8.24% - Simulation Time = 16.48 s ::: Wallclock Time = 1936.31 s
+ 8.50% - Simulation Time = 16.99 s ::: Wallclock Time = 2000.89 s
+ 8.75% - Simulation Time = 17.50 s ::: Wallclock Time = 2065.17 s
+ 9.00% - Simulation Time = 18.01 s ::: Wallclock Time = 2129.25 s
+Estimated wallclock time remaining: 5 hours 58 minutes
+ 9.26% - Simulation Time = 18.52 s ::: Wallclock Time = 2193.51 s
+ 9.51% - Simulation Time = 19.02 s ::: Wallclock Time = 2257.83 s
+ 9.76% - Simulation Time = 19.53 s ::: Wallclock Time = 2322.21 s
+10.02% - Simulation Time = 20.03 s ::: Wallclock Time = 2385.70 s
+10.27% - Simulation Time = 20.54 s ::: Wallclock Time = 2448.44 s
+Estimated wallclock time remaining: 5 hours 56 minutes
+10.52% - Simulation Time = 21.04 s ::: Wallclock Time = 2512.01 s
+10.77% - Simulation Time = 21.54 s ::: Wallclock Time = 2579.73 s
+11.02% - Simulation Time = 22.04 s ::: Wallclock Time = 2641.78 s
+11.27% - Simulation Time = 22.54 s ::: Wallclock Time = 2703.93 s
+11.52% - Simulation Time = 23.04 s ::: Wallclock Time = 2766.34 s
+Estimated wallclock time remaining: 5 hours 54 minutes
+11.77% - Simulation Time = 23.54 s ::: Wallclock Time = 2828.36 s
+12.02% - Simulation Time = 24.04 s ::: Wallclock Time = 2891.09 s
+12.27% - Simulation Time = 24.54 s ::: Wallclock Time = 2954.24 s
+12.52% - Simulation Time = 25.04 s ::: Wallclock Time = 3017.46 s
+12.77% - Simulation Time = 25.54 s ::: Wallclock Time = 3080.31 s
+Estimated wallclock time remaining: 5 hours 50 minutes
+13.02% - Simulation Time = 26.03 s ::: Wallclock Time = 3143.58 s
+13.26% - Simulation Time = 26.53 s ::: Wallclock Time = 3206.80 s
+13.51% - Simulation Time = 27.03 s ::: Wallclock Time = 3269.99 s
+13.76% - Simulation Time = 27.52 s ::: Wallclock Time = 3333.15 s
+14.01% - Simulation Time = 28.02 s ::: Wallclock Time = 3396.31 s
+Estimated wallclock time remaining: 5 hours 47 minutes
+14.26% - Simulation Time = 28.51 s ::: Wallclock Time = 3458.42 s
+14.50% - Simulation Time = 29.01 s ::: Wallclock Time = 3521.40 s
+14.75% - Simulation Time = 29.50 s ::: Wallclock Time = 3583.68 s
+15.00% - Simulation Time = 29.99 s ::: Wallclock Time = 3644.97 s
+15.24% - Simulation Time = 30.49 s ::: Wallclock Time = 3706.79 s
+Estimated wallclock time remaining: 5 hours 43 minutes
+15.49% - Simulation Time = 30.98 s ::: Wallclock Time = 3768.66 s
+15.74% - Simulation Time = 31.47 s ::: Wallclock Time = 3830.49 s
+15.98% - Simulation Time = 31.97 s ::: Wallclock Time = 3891.86 s
+16.23% - Simulation Time = 32.46 s ::: Wallclock Time = 3953.44 s
+16.48% - Simulation Time = 32.95 s ::: Wallclock Time = 4014.50 s
+Estimated wallclock time remaining: 5 hours 39 minutes
+16.72% - Simulation Time = 33.44 s ::: Wallclock Time = 4075.07 s
+16.97% - Simulation Time = 33.94 s ::: Wallclock Time = 4135.59 s
+17.21% - Simulation Time = 34.43 s ::: Wallclock Time = 4195.85 s
+17.46% - Simulation Time = 34.92 s ::: Wallclock Time = 4256.58 s
+17.71% - Simulation Time = 35.41 s ::: Wallclock Time = 4317.21 s
+Estimated wallclock time remaining: 5 hours 34 minutes
+17.95% - Simulation Time = 35.91 s ::: Wallclock Time = 4377.56 s
+18.20% - Simulation Time = 36.40 s ::: Wallclock Time = 4438.32 s
+18.45% - Simulation Time = 36.89 s ::: Wallclock Time = 4499.56 s
+18.69% - Simulation Time = 37.38 s ::: Wallclock Time = 4560.86 s
+18.94% - Simulation Time = 37.87 s ::: Wallclock Time = 4622.82 s
+Estimated wallclock time remaining: 5 hours 29 minutes
+19.18% - Simulation Time = 38.37 s ::: Wallclock Time = 4684.98 s
+19.43% - Simulation Time = 38.86 s ::: Wallclock Time = 4747.65 s
+19.67% - Simulation Time = 39.35 s ::: Wallclock Time = 4810.74 s
+19.92% - Simulation Time = 39.84 s ::: Wallclock Time = 4873.31 s
+20.16% - Simulation Time = 40.33 s ::: Wallclock Time = 4936.73 s
+Estimated wallclock time remaining: 5 hours 25 minutes
+20.41% - Simulation Time = 40.82 s ::: Wallclock Time = 5001.05 s
+20.65% - Simulation Time = 41.31 s ::: Wallclock Time = 5065.01 s
+20.90% - Simulation Time = 41.80 s ::: Wallclock Time = 5129.40 s
+21.14% - Simulation Time = 42.29 s ::: Wallclock Time = 5193.66 s
+21.39% - Simulation Time = 42.77 s ::: Wallclock Time = 5258.24 s
+Estimated wallclock time remaining: 5 hours 22 minutes
+21.63% - Simulation Time = 43.26 s ::: Wallclock Time = 5322.52 s
+21.87% - Simulation Time = 43.75 s ::: Wallclock Time = 5387.33 s
+22.12% - Simulation Time = 44.24 s ::: Wallclock Time = 5452.33 s
+22.36% - Simulation Time = 44.72 s ::: Wallclock Time = 5517.08 s
+23.82% - Simulation Time = 47.64 s ::: Wallclock Time = 5903.33 s
+Estimated wallclock time remaining: 5 hours 14 minutes
+25.27% - Simulation Time = 50.54 s ::: Wallclock Time = 6282.87 s
+26.71% - Simulation Time = 53.43 s ::: Wallclock Time = 6660.30 s
+28.16% - Simulation Time = 56.31 s ::: Wallclock Time = 7041.22 s
+29.59% - Simulation Time = 59.19 s ::: Wallclock Time = 7425.87 s
+31.03% - Simulation Time = 62.05 s ::: Wallclock Time = 7818.85 s
+Estimated wallclock time remaining: 4 hours 49 minutes
+32.45% - Simulation Time = 64.91 s ::: Wallclock Time = 8211.84 s
+33.87% - Simulation Time = 67.75 s ::: Wallclock Time = 8604.97 s
+35.29% - Simulation Time = 70.58 s ::: Wallclock Time = 8989.08 s
+36.70% - Simulation Time = 73.40 s ::: Wallclock Time = 9373.16 s
+38.11% - Simulation Time = 76.22 s ::: Wallclock Time = 9752.26 s
+Estimated wallclock time remaining: 4 hours 23 minutes
+39.51% - Simulation Time = 79.03 s ::: Wallclock Time = 10133.10 s
+40.92% - Simulation Time = 81.83 s ::: Wallclock Time = 10516.65 s
+42.32% - Simulation Time = 84.63 s ::: Wallclock Time = 10898.41 s
+43.71% - Simulation Time = 87.43 s ::: Wallclock Time = 11279.18 s
+45.11% - Simulation Time = 90.22 s ::: Wallclock Time = 11651.38 s
+Estimated wallclock time remaining: 3 hours 56 minutes
+46.50% - Simulation Time = 93.00 s ::: Wallclock Time = 12019.42 s
+47.89% - Simulation Time = 95.79 s ::: Wallclock Time = 12391.73 s
+49.28% - Simulation Time = 98.57 s ::: Wallclock Time = 12758.18 s
+50.67% - Simulation Time = 101.35 s ::: Wallclock Time = 13129.58 s
+52.06% - Simulation Time = 104.13 s ::: Wallclock Time = 13506.38 s
+Estimated wallclock time remaining: 3 hours 27 minutes
+53.45% - Simulation Time = 106.90 s ::: Wallclock Time = 13886.72 s
+54.83% - Simulation Time = 109.67 s ::: Wallclock Time = 14260.93 s
+56.22% - Simulation Time = 112.44 s ::: Wallclock Time = 14628.66 s
+57.60% - Simulation Time = 115.20 s ::: Wallclock Time = 14995.00 s
+59.26% - Simulation Time = 118.52 s ::: Wallclock Time = 15425.03 s
+Estimated wallclock time remaining: 2 hours 56 minutes
+60.92% - Simulation Time = 121.84 s ::: Wallclock Time = 15852.69 s
+62.58% - Simulation Time = 125.16 s ::: Wallclock Time = 16277.74 s
+64.24% - Simulation Time = 128.49 s ::: Wallclock Time = 16705.37 s
+65.90% - Simulation Time = 131.81 s ::: Wallclock Time = 17119.26 s
+67.57% - Simulation Time = 135.14 s ::: Wallclock Time = 17526.28 s
+Estimated wallclock time remaining: 2 hours 20 minutes
+69.24% - Simulation Time = 138.47 s ::: Wallclock Time = 17940.39 s
+70.90% - Simulation Time = 141.80 s ::: Wallclock Time = 18372.06 s
+72.29% - Simulation Time = 144.58 s ::: Wallclock Time = 18733.93 s
+73.96% - Simulation Time = 147.92 s ::: Wallclock Time = 19158.63 s
+75.63% - Simulation Time = 151.25 s ::: Wallclock Time = 19580.07 s
+Estimated wallclock time remaining: 1 hours 45 minutes
+77.30% - Simulation Time = 154.59 s ::: Wallclock Time = 19999.61 s
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+78.97% - Simulation Time = 157.93 s ::: Wallclock Time = 20404.82 s
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+80.64% - Simulation Time = 161.28 s ::: Wallclock Time = 20806.57 s
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+E: next_node_id: -1 my_if_id: 0 next_if_id0
+82.31% - Simulation Time = 164.63 s ::: Wallclock Time = 21218.91 s
+83.99% - Simulation Time = 167.98 s ::: Wallclock Time = 21635.56 s
+Estimated wallclock time remaining: 1 hours 8 minutes
+85.67% - Simulation Time = 171.34 s ::: Wallclock Time = 22056.79 s
+87.07% - Simulation Time = 174.13 s ::: Wallclock Time = 22420.30 s
+88.74% - Simulation Time = 177.49 s ::: Wallclock Time = 22844.70 s
+90.42% - Simulation Time = 180.85 s ::: Wallclock Time = 23263.47 s
+92.10% - Simulation Time = 184.20 s ::: Wallclock Time = 23677.86 s
+Estimated wallclock time remaining: 33 minutes 50 seconds
+93.78% - Simulation Time = 187.57 s ::: Wallclock Time = 24092.10 s
+95.47% - Simulation Time = 190.93 s ::: Wallclock Time = 24510.72 s
+97.15% - Simulation Time = 194.30 s ::: Wallclock Time = 24930.42 s
+98.83% - Simulation Time = 197.66 s ::: Wallclock Time = 25352.85 s
+Finished simulation.
+Simulation of 200.0 seconds took in wallclock time 25647.8 seconds.
+
+STORE TCP FLOW RESULTS
+  > Opening TCP flow log files:
+    >> Opened: ../../paper/ns3_experiments/traffic_matrix/runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows.csv
+    >> Opened: ../../paper/ns3_experiments/traffic_matrix/runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows.txt
+  > Writing tcp_flows.txt header
+  > Writing log files line-by-line
+  > Total TCP flow log entries to write... 5000
+  > Closing TCP flow log files:
+    >> Closed: ../../paper/ns3_experiments/traffic_matrix/runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows.csv
+    >> Closed: ../../paper/ns3_experiments/traffic_matrix/runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows.txt
+  > TCP flow log files have been written
+
+STORE UDP BURST RESULTS
+  > Not enabled, so no UDP burst results are written
+
+STORE PINGMESH RESULTS
+  > Not enabled, so no pingmesh results are written
+
+CLEAN-UP
+  > Simulator is destroyed
+
+TIMING RESULTS
+------
+[    0.0 -     0.0] (0.0 s) :: Configure run and logs directory
+[    0.0 -     0.0] (0.0 s) :: Configure simulator
+[    0.0 -     0.0] (0.0 s) :: Setup TCP parameters
+[    0.0 -     8.7] (8.7 s) :: Create initial single forwarding state
+[    8.7 -    29.6] (20.8 s) :: Setup routing arbiter on each node
+[   29.6 -    30.8] (1.2 s) :: Create initial single forwarding state
+[   30.8 -    31.0] (0.2 s) :: Set first GSL interface bandwidth
+[   31.0 -    31.0] (0.0 s) :: Read flow schedule
+[   31.0 -    31.0] (0.0 s) :: Remove previous flow log files
+[   31.0 -    31.0] (0.0 s) :: Setup TCP flow sinks
+[   31.0 -    31.0] (0.0 s) :: Setup traffic TCP flow starter
+[   31.0 -    31.0] (0.0 s) :: Whatever is between previous timestamp and the simulation run
+[   31.0 - 25678.8] (25647.8 s) :: Run simulation
+[25678.8 - 25678.9] (0.0 s) :: Write TCP flow log files
+[25678.9 - 25681.1] (2.3 s) :: Destroy simulator
+
+BASIC SIMULATION END
+  > Date... Wednesday September  3, 2025
+  > Time... 05:50:16
+
+libgcov profiling error:/home/mberma24/hypatia/ns3-sat-sim/simulator/build/debug_all/contrib/satellite-network/model/arbiter-gs-priority-deflection.cc.1.gcda:overwriting an existing profile data with a different timestamp
