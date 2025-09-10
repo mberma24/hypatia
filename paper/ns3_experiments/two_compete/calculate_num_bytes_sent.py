@@ -3,7 +3,7 @@ import os
 
 time = 0
 
-def get_mbits_sent(S = 50, n_flows = 100, path = "./runs/run_two_kuiper_isls_moving/logs_ns3"):
+def get_mbits_sent(S = 50, n_flows = 100, path = "./runs/run_two_kuiper_isls_static/logs_ns3"):
     time = S
     step = 100_000_000  # 0.1s in ns
     total_ns = int(S * 1e9)

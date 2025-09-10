@@ -1,6 +1,7 @@
 import exputil
 import networkload
 import random
+import time
 
 local_shell = exputil.LocalShell()
 
@@ -9,7 +10,8 @@ local_shell.remove_force_recursive("runs")
 local_shell.remove_force_recursive("pdf")
 local_shell.remove_force_recursive("data")
 
-for movement in ["static", "moving"]:
+for movement in ["moving1", "moving2", "moving3"]:#"static", "moving"]:
+    time.sleep(2)
     protocol_chosen = "tcp"
 
     run_dir = f"runs/run_two_kuiper_isls_{movement}"

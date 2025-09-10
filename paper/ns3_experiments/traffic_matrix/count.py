@@ -1,7 +1,7 @@
 import re
 from collections import defaultdict
 
-TIME = 200
+TIME = 50
 
 source_sent = defaultdict(list)
 
@@ -30,7 +30,7 @@ def parse_aggregate_sent_per_source(filepath):
 
 #total_pairs_m = parse_aggregate_sent_per_source("./runs/run_general_tm_pairing_kuiper_isls_moving/logs_ns3/tcp_flows.txt")
 #total_pairs_m = parse_aggregate_sent_per_source("./flows/tcp_flows_100f_cache50s.txt")
-total_pairs_s = parse_aggregate_sent_per_source("./runs/run_two_kuiper_isls_moving/logs_ns3/tcp_flows.txt")
+total_pairs_s = parse_aggregate_sent_per_source("/home/mberma24/hypatia/z_flows/traffic_matrix/kuiper/123456789/Random/tcp_flows.txt")
 #total_pairs_s = parse_aggregate_sent_per_source("./flows/tcp_flows_sf1s.txt")
 total_pairs_m =total_pairs_s
 totals_m = [agg / TIME for _, agg in total_pairs_m]

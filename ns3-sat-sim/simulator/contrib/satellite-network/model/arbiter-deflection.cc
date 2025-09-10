@@ -130,12 +130,10 @@ std::tuple<int32_t, int32_t, int32_t> ArbiterDeflection::TopologySatelliteNetwor
         // Return an invalid entry if no next hops are available
         return std::make_tuple(-2, -2, -2);
     }
-    printf("Here1?\n");
     if (IsFinalHopToGS(std::get<0>(next_hops[0]), std::get<1>(next_hops[0]))) {
-        printf("Here2?\n");
+
         MarkPacket(pkt);
     }
-    printf("Here3?\n");
 
     uint32_t src_ip = ipHeader.GetSource().Get();
     uint32_t dst_ip = ipHeader.GetDestination().Get();
@@ -206,7 +204,7 @@ void ArbiterDeflection::log_paths(PacketRoutingContext  ctx) {
         }
 
         // Directory you want
-        std::string baseDir = "/home/sat/hypatia/paper/ns3_experiments/two_compete/"
+        std::string baseDir = "/home/mberma24/hypatia/paper/ns3_experiments/two_compete/"
                             "runs/run_two_kuiper_isls_moving/logs_ns3/";
 
         // Build filename with target_node_id
@@ -219,7 +217,7 @@ void ArbiterDeflection::log_paths(PacketRoutingContext  ctx) {
             outfile.close();
         }
 
-        std::cout << "WROTE" << std::endl;
+
         // Reset for next interval
         m_path_time = t;
         m_path_lengths.clear();

@@ -172,7 +172,7 @@ def main():
     )
 
     # Plot all the pair path utilization
-    for movement in ["static", "moving"]:
+    for movement in ["moving"]:#"static", "moving"]:
 
         # Pair path max utilization
         plot_pair_path_max_utilization(

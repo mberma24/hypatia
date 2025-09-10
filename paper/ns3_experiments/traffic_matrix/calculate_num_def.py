@@ -5,7 +5,7 @@ import copy
 S = 50
 step = 100_000_000 
 total_ns = int(S * 1e9) - step
-path = "../../satellite_networks_state/gen_data_lasthop_splitting/kuiper_630_isls_plus_grid_ground_stations_top_100_algorithm_free_gs_one_sat_uplink_downlink_only_over_isls_lasthop_splitting/dynamic_state_100ms_for_50s"
+path = "../../satellite_networks_state/gen_data_lasthop_splitting/kuiper_630_isls_plus_grid_ground_stations_top_100_algorithm_free_gs_one_sat_uplink_downlink_only_over_isls_lasthop_splitting/dynamic_state_100ms_for_200s"
 
 
 src_node = 1161

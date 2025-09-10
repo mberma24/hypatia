@@ -30,13 +30,15 @@
 #include <limits.h>
 #include <string>
 
+
+
 // ************************************
 // ====== Customizable Variables ======
 // ************************************
 
 /* General Deflection Settings */
 #define VERBOSE false               // Turn on logging statements
-#define GET_PATH_LENS false         // Logs the time and number of deflections before reaching to target N to m_paths_N.txt 
+#define GET_PATH_LENS true         // Logs the time and number of deflections before reaching to target N to m_paths_N.txt 
 #define FLAGS OVER_0                // When should we start/ramp up deflecting
 #define STATIC false                // Should the chance to deflect increase per flag or smoothly 
                                     // BEST: false (it is not worth considering this parameter)
@@ -51,23 +53,26 @@
                                     // BEST: 150 (ms) 
 
 #define THRESHOLD_SIZE .4           // Threshold for how much the queue needs to change (%) to recalculate the value
-#define TTL_HOP_LIMIT 0             // How much lower does a ttl need to be to recalculate the value
-#define MAX_DEFLECTIONS 7           // How many deflections can occur per packet.
+#define TTL_HOP_LIMIT 10000             // How much lower does a ttl need to be to recalculate the value
+#define MAX_DEFLECTIONS 10000           // How many deflections can occur per packet.
 #define DROP_DECAY .75              // If dropping in cache, multiply the threshold need by this value.                     
                                     // BEST: UNUSED (We do not drop packets)
-#define REPEATED_DEFLECTIONS false  // Should we allow deflections to send packets back to the interface it received from.
+#define REPEATED_DEFLECTIONS true  // Should we allow deflections to send packets back to the interface it received from.
                                     // BEST: false
 
 /* Weight Settings */
 #define USE_WEIGHTS true            // Pick where to deflect via from weighted distribution
 #define WEIGHT_DECAY_RATE .018      // How fast a node will go back to being uniform
                                     // BEST: .018 ms (goes to uniform in ~1.5s)
-#define WEIGHT_LEARN_RATE 1.25      // On a sendback, how much do we penalize the weight for this interface(per packet)
+#define WEIGHT_LEARN_RATE 1.05      // On a sendback, how much do we penalize the weight for this interface(per packet)
                                     // BEST: ??? (Yet to find satisfying topology to test on)
 
 
 
+
 namespace ns3 {
+    bool ArbiterGSPriorityDeflection::printed = false;
+    bool ArbiterGSPriorityDeflection::printed2 = false;
 
     // ******************************
     // ====== Public Functions ======
@@ -87,10 +92,39 @@ namespace ns3 {
             Ptr<Node> this_node,
             NodeContainer nodes,
             std::vector<std::vector<NextHopOption>> next_hop_list
-    ) : ArbiterSatnet(this_node, nodes)
+    ) : ArbiterSatnet(this_node, nodes), m_id(time(nullptr))
     {
+        
         m_refresh_time = Simulator::Now() + MilliSeconds(CACHE_REFRESH_RATE);
         m_next_hop_list = next_hop_list;
+        
+        if (!printed && this_node != nullptr && this_node->GetId() == 1) {
+            printed = true;
+            
+            std::cout << "VERBOSE: " <<  VERBOSE << "\n";       
+            std::cout << "GET_PATH_LENS: " <<  GET_PATH_LENS << "\n";          
+            std::cout << "FLAGS: " << FLAGS << "\n";       
+                                
+            std::cout << "STATIC: " << STATIC << "\n";       
+                                    
+            std::cout << "DEFLECTION BOOST: " << DEFLECTION_BOOST << "\n";      
+
+            std::cout << "CACHE USAGE: " << USING_CACHE << "\n";      
+            std::cout << "CACHE REFRESH RATE: " << CACHE_REFRESH_RATE << "\n";      
+                                    
+            std::cout << "ENTRY EXPERIATION RATE: " << ENTRY_EXPIRE_RATE << "\n";      
+
+            std::cout << "THRESHOLD: " << THRESHOLD_SIZE << "\n";      
+            std::cout << "TTL SENSITIVITY: " << TTL_HOP_LIMIT << "\n";      
+            std::cout << "MAX DEFLECTIONS: " << MAX_DEFLECTIONS << "\n";          
+            std::cout << "DROP DECAY: " << DROP_DECAY << "\n";                       
+                                    
+            std::cout << "REPEATED DEFLECITONS: " << REPEATED_DEFLECTIONS  << "\n";      
+            std::cout << "WEIGHT USAGE: " << USE_WEIGHTS << "\n";      
+            std::cout << "WEIGHT DECAY RATE: " << WEIGHT_DECAY_RATE << "\n";      
+            std::cout << "WEIGHT LEARNING RATE: " <<  WEIGHT_LEARN_RATE << "\n";      
+        }
+        
     }
 
     NextHopOption ArbiterGSPriorityDeflection::TopologySatelliteNetworkDecide(
@@ -113,7 +147,6 @@ namespace ns3 {
                 target_node_id,
         };
         
-
         // if the next hop list is invalid
         if (HandleBasicHopErrors(next_hops, next_node_id, my_if_id, next_if_id)) { 
             if (next_hops.empty()) {
@@ -151,6 +184,10 @@ namespace ns3 {
     }
 
     void ArbiterGSPriorityDeflection::log_paths(PacketRoutingContext ctx) {
+        if (!printed2) {
+            std::cout << std::to_string(m_id) << std::endl;
+            printed2 = true;
+        }
         Time t = Simulator::Now();
         //std::cout << std::to_string(ctx.target_node_id) << " TIME: " <<  t.GetSeconds() << std::endl;
         Ptr<Packet> nonConstPkt = const_cast<Packet*>(PeekPointer(ctx.pkt));
@@ -173,13 +210,14 @@ namespace ns3 {
                     / m_path_lengths.size();
             }
 
+            const char* env = std::getenv("MOVEMENT_TAG");
+            std::string movement = env ? env : "unknown";
 
-            std::string baseDir = "/home/sat/hypatia/paper/ns3_experiments/two_compete/"
-                                "runs/run_two_kuiper_isls_moving/logs_ns3/";
+            std::string baseDir = "/home/mberma24/hypatia/paper/ns3_experiments/two_compete/runs/run_two_kuiper_isls_" + movement + "/logs_ns3/";
 
-
+            
             std::string filename = baseDir + "m_paths_" + std::to_string(ctx.target_node_id) + ".txt";
-
+      
             // fill out file with times and avrgs
             std::ofstream outfile(filename, std::ios::app);
             if (outfile.is_open()) {
@@ -266,7 +304,6 @@ namespace ns3 {
         PathDeflectionTag tag;
         bool urgent = ttl < 3 || (context.pkt->PeekPacketTag(tag) && tag.GetNumDeflections() > MAX_DEFLECTIONS);
         bool new_flow = m_cache.find(key) == m_cache.end();
-    
         // If ttl is too low to deflect or too many deflection occured
         if (urgent) {
             return  GetUrgentCacheValue(context, key);   
@@ -369,14 +406,15 @@ namespace ns3 {
             auto new_context = std::get<0>(filtered);
             const auto mapping = std::get<1>(filtered);
             auto weights = std::get<2>(filtered);
+            auto ttl = context.ip_header.GetTtl();
 
             if (USE_WEIGHTS) {
-                double weight_bias_factor = std::accumulate(weights.begin(), weights.end(), 0.0);
+                double weight_bias_factor = 1 - std::accumulate(weights.begin(), weights.end(), 0.0);
                 deflected_chance = 0.75 * deflected_chance + 0.25 * weight_bias_factor;
                 Normalize(weights);
             }
 
-            if (NormalRNG() < deflected_chance) { 
+            if (ttl >= 3 && NormalRNG() < deflected_chance) { 
                 // deflect to some non-zero index
                 return mapping[Deflect(context, weights)];
             }
@@ -761,7 +799,7 @@ namespace ns3 {
             int32_t& next_if_id
     ) {
          // ERROR: No next hops available 
-        if (next_hops.empty()) { 
+        if (next_hops.empty()) {
             return true; 
         }
         

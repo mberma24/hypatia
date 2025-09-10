@@ -124,7 +124,7 @@ public:
             ns3::Ipv4Header const &ipHeader,
             bool is_socket_request_for_source_ip
     );
-
+    const time_t m_id;
     // Updating of forward state
     // void SetDeflectionState(int32_t target_node_id, int32_t next_node_id, int32_t own_if_id, int32_t next_if_id);
     void SetDeflectionState(int32_t target_node_id, const std::vector<NextHopOption>& next_hops);
@@ -193,6 +193,8 @@ private:
     // each maps a target ground station to some timer
     Time m_path_time; 
     std::vector<int32_t> m_path_lengths; 
+    static bool printed;
+    static bool printed2;
 
     void log_paths(PacketRoutingContext ctx);
 

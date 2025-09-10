@@ -22,6 +22,7 @@
 
 import exputil
 import time
+import os
 
 local_shell = exputil.LocalShell()
 max_num_processes = 4
@@ -34,14 +35,21 @@ if local_shell.count_screens() != 0:
 
 # Generate the commands
 commands_to_run = []
-for movement in ["static", "moving"]:
+for movement in ["moving1", "moving2", "moving3"]:#"static", "moving"]:
+    time.sleep(2)
     run_name = "run_two_kuiper_isls_%s" % ( movement)
     logs_ns3_dir = "runs/" + run_name + "/logs_ns3"
     local_shell.remove_force_recursive(logs_ns3_dir)
     local_shell.make_full_dir(logs_ns3_dir)
-    command = "cd ../../../ns3-sat-sim/simulator; ./waf --run=\"main_satnet " \
-              "--run_dir='../../paper/ns3_experiments/two_compete/runs/" + run_name + "'\" " \
-              "2>&1 | tee '../../paper/ns3_experiments/two_compete/" + logs_ns3_dir + "/console.txt'"
+    # command = "cd ../../../ns3-sat-sim/simulator; ./waf --run=\"main_satnet " \
+    #           "--run_dir='../../paper/ns3_experiments/two_compete/runs/" + run_name + "'\" " \
+    #           "2>&1 | tee '../../paper/ns3_experiments/two_compete/" + logs_ns3_dir + "/console.txt'"
+    command = (
+        "cd ../../../ns3-sat-sim/simulator; ./waf --run=\"main_satnet "
+        "--run_dir='../../paper/ns3_experiments/two_compete/runs/" + run_name + "' "
+        "--movement=" + movement + "\" "
+        "2>&1 | tee '../../paper/ns3_experiments/two_compete/" + logs_ns3_dir + "/console.txt'"
+    )
     commands_to_run.append(command)
 
 # Run the commands
@@ -49,6 +57,9 @@ print("Running commands (at most %d in parallel)..." % max_num_processes)
 for i in range(len(commands_to_run)):
     print("Starting command %d out of %d: %s" % (i + 1, len(commands_to_run), commands_to_run[i]))
     local_shell.detached_exec(commands_to_run[i])
+
+    time.sleep(2)
+    
     while local_shell.count_screens() >= max_num_processes:
         time.sleep(2)
 

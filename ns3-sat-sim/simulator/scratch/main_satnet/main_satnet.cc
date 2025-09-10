@@ -117,25 +117,38 @@ using namespace ns3;
 #include "ns3/trace-source-accessor.h"
 
 
-
 int main(int argc, char *argv[]) {
 
     // No buffering of printf
     setbuf(stdout, nullptr);
 
     // Retrieve run directory
+    // CommandLine cmd;
+    // std::string run_dir = "";
+    // cmd.Usage("Usage: ./waf --run=\"main_satnet --run_dir='<path/to/run/directory>'\"");
+    // cmd.AddValue("run_dir",  "Run directory", run_dir);
+    // cmd.Parse(argc, argv);
+
     CommandLine cmd;
     std::string run_dir = "";
-    cmd.Usage("Usage: ./waf --run=\"main_satnet --run_dir='<path/to/run/directory>'\"");
+    std::string movement = "";
+    cmd.Usage("Usage: ./waf --run=\"main_satnet --run_dir='<path/to/run/directory>' --movement=<tag>\"");
     cmd.AddValue("run_dir",  "Run directory", run_dir);
+    cmd.AddValue("movement", "Movement tag (e.g., moving1, moving2)", movement);
     cmd.Parse(argc, argv);
     if (run_dir.compare("") == 0) {
         printf("Usage: ./waf --run=\"main_satnet --run_dir='<path/to/run/directory>'\"");
         return 0;
     }
 
+    
+
     // Load basic simulation environment
     Ptr<BasicSimulation> basicSimulation = CreateObject<BasicSimulation>(run_dir);
+
+    if (!movement.empty()) {
+        setenv("MOVEMENT_TAG", movement.c_str(), 1);
+    }
 
     // Setting socket type
     Config::SetDefault ("ns3::TcpL4Protocol::SocketType", StringValue ("ns3::" + basicSimulation->GetConfigParamOrFail("tcp_socket_type")));
@@ -146,7 +159,7 @@ int main(int argc, char *argv[]) {
     // Read topology, and install routing arbiters
     Ptr<TopologySatelliteNetwork> topology = CreateObject<TopologySatelliteNetwork>(basicSimulation, Ipv4ArbiterRoutingHelper());
 
-
+    //ArbiterDeflectionHelper  arbiterHelper(basicSimulation, topology->GetNodes());
     ArbiterGSPriorityDeflectionHelper arbiterHelper(basicSimulation, topology->GetNodes());
     GslIfBandwidthHelper gslIfBandwidthHelper(basicSimulation, topology->GetNodes());
 
@@ -159,7 +172,8 @@ int main(int argc, char *argv[]) {
     // Schedule pings
     PingmeshScheduler pingmeshScheduler(basicSimulation, topology); // Requires enable_pingmesh_scheduler=true
 
-    std::srand(std::time(nullptr));
+    //std::srand(std::time(nullptr));
+    std::srand(123456789);
 
     // Run simulation
     basicSimulation->Run();

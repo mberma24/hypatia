@@ -7,11 +7,16 @@ import numpy as np
 folders = [
     "Cache",  
     "Cache_All_Off", 
-    "Cache_No_Lim", 
-    "Cache_No_Poison",  
-    "Cache_No_Weights", 
-    "Cache_No_TTL_Sensitivity", 
-    "Hash",
+    # "Cache_No_Lim", 
+    # "Cache_No_Poison",  
+    # "Cache_No_Weights", 
+    # "Cache_No_TTL_Sensitivity", 
+    "Cache_None_Aside_Weights", 
+    # "Cache_None_Aside_Weights2", 
+    "Cache_None_Aside_TTL", 
+    "Cache_None_Aside_Lim",
+    "Cache_None_Aside_Poison" 
+    # "Hash",
 ]
 
 runs = ["A", "B", "C"]
@@ -86,7 +91,7 @@ def main():
     plt.ylabel("Average deflections")
     plt.title("Path Lengths for m_paths_1215 Across Folders (Mean ± Std Dev, Hash = single run)")
     
-    graph_path = "../graph_data/path_lengths/all_folders_1215_runs.png"
+    graph_path = "../graph_data/path_lengths/single_change_cache_folders_1215_runs.png"
     plt.savefig(graph_path, dpi=150)
     plt.close()
 
